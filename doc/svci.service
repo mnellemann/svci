@@ -1,0 +1,12 @@
+[Unit]
+Description=SVC Insights Service
+
+[Service]
+#User=nobody
+#Group=nobody
+TimeoutSec=20
+Restart=on-failure
+ExecStart=/opt/svci/bin/svci
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,136 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'application'
+
+    // Code coverage of tests
+    id 'jacoco'
+
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "net.nemerosa.versioning" version "2.15.1"
+    id "nebula.ospackage" version "9.1.1"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+group = projectGroup
+version = projectVersion
+
+dependencies {
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.0'
+    implementation 'info.picocli:picocli:4.7.0'
+    implementation 'org.influxdb:influxdb-java:2.23'
+    //implementation 'com.influxdb:influxdb-client-java:6.7.0'
+    implementation 'org.slf4j:slf4j-api:2.0.4'
+    implementation 'org.slf4j:slf4j-simple:2.0.4'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0' // Also used by InfluxDB Client
+    //implementation "org.eclipse.jetty:jetty-client:9.4.49.v20220914"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.1'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+    testImplementation "org.mock-server:mockserver-netty-no-dependencies:5.14.0"
+}
+
+application {
+    mainClass.set('biz.nellemann.svci.Application')
+    applicationDefaultJvmArgs = [ "-server", "-Xms64m", "-Xmx64m", "-XX:+UseG1GC", "-XX:+ExitOnOutOfMemoryError", "-XX:+AlwaysPreTouch" ]
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+apply plugin: 'nebula.ospackage'
+ospackage {
+    packageName = 'svci'
+    release = '1'
+    user = 'root'
+    packager = "Mark Nellemann <mark.nellemann@gmail.com>"
+
+    into '/opt/svci'
+
+    from(shadowJar.outputs.files) {
+        into 'lib'
+    }
+
+    from('build/scriptsShadow') {
+        into 'bin'
+    }
+
+    from('doc/') {
+        into 'doc'
+    }
+
+    from(['README.md', 'LICENSE']) {
+        into 'doc'
+    }
+
+}
+
+buildRpm {
+    dependsOn startShadowScripts
+    os = "LINUX"
+}
+
+buildDeb {
+    dependsOn startShadowScripts
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+jacocoTestReport {
+    group = "verification"
+    reports {
+        xml.required = false
+        csv.required = false
+        html.destination file("${buildDir}/reports/coverage")
+    }
+}
+test.finalizedBy jacocoTestReport
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.1
+            }
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
+jar {
+    manifest {
+        attributes(
+            'Created-By'     : "Gradle ${gradle.gradleVersion}",
+            'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
+            'Build-Jdk'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+            'Build-User'     : System.properties['user.name'],
+            'Build-Version'  : versioning.info.tag ?: (versioning.info.branch + "-" + versioning.info.build),
+            'Build-Revision' : versioning.info.commit,
+            'Build-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ss.SSSZ").toString(),
+            'Add-Opens'      : 'java.base/java.lang.invoke' // To ignore "Illegal reflective access by retrofit2.Platform" warnings
+        )
+    }
+}
+
+tasks.create("packages") {
+    group "build"
+    dependsOn ":build"
+    dependsOn ":buildDeb"
+    dependsOn ":buildRpm"
+}

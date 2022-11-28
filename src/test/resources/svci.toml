@@ -1,0 +1,18 @@
+# SVCi Configuration
+
+# InfluxDB to save metrics
+[influx]
+url = "http://localhost:8086"
+username = "root"
+password = ""
+database = "svci"
+
+# SVC on our primary site
+[svc.site1]
+url = "https://10.10.10.18:7443"
+username = "superuser"
+password = "password"
+refresh = 29
+discover = 59
+trust = true   # Ignore SSL cert. errors
+
