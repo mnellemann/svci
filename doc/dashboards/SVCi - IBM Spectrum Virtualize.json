@@ -1598,7 +1598,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1774,7 +1775,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1920,9 +1922,9 @@
         },
         "definition": "SHOW TAG VALUES FROM \"system\" WITH KEY = \"name\" WHERE time > now() - 24h",
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": "System",
-        "multi": true,
+        "multi": false,
         "name": "system",
         "options": [],
         "query": "SHOW TAG VALUES FROM \"system\" WITH KEY = \"name\" WHERE time > now() - 24h",
@@ -1938,7 +1940,7 @@
           "type": "influxdb",
           "uid": "${DS_SVCI}"
         },
-        "definition": "SHOW TAG VALUES FROM \"node_stats\" WITH KEY = \"name\" WHERE time > now() - 24h",
+        "definition": "SHOW TAG VALUES FROM \"node_stats\" WITH KEY = \"name\" WHERE \"system\" = $system AND time > now() - 24h",
         "description": "",
         "hide": 0,
         "includeAll": true,
@@ -1946,7 +1948,7 @@
         "multi": true,
         "name": "node",
         "options": [],
-        "query": "SHOW TAG VALUES FROM \"node_stats\" WITH KEY = \"name\" WHERE time > now() - 24h",
+        "query": "SHOW TAG VALUES FROM \"node_stats\" WITH KEY = \"name\" WHERE \"system\" = $system AND time > now() - 24h",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -1956,8 +1958,8 @@
     ]
   },
   "time": {
-    "from": "now-6h",
-    "to": "now"
+    "from": "now-3h",
+    "to": "now-10s"
   },
   "timepicker": {
     "nowDelay": "10s"
@@ -1965,6 +1967,6 @@
   "timezone": "",
   "title": "SVCi - IBM Spectrum Virtualize",
   "uid": "7R8LbzKV3",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }

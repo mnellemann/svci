@@ -31,7 +31,7 @@ See the [Influx documentation](https://docs.influxdata.com/influxdb/v1.8/query_l
 
 ### 2 - SVCi Installation & Configuration
 
-Install *SVCi* on a host, that can connect to your SAN Volume Controller (on port 7443), and is also allowed to connect to the InfluxDB service. This *can be* the same LPAR/VM as used for the InfluxDB installation.
+Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on port 7443), and is also allowed to connect to the InfluxDB service. This *can be* the same LPAR/VM as used for the InfluxDB installation.
 
 - Ensure you have **correct date/time** and NTPd running to keep it accurate!
 - The only requirement for **svci** is the Java runtime, version 8 (or later)
@@ -39,13 +39,13 @@ Install *SVCi* on a host, that can connect to your SAN Volume Controller (on por
   - On RPM based systems: ```sudo rpm -ivh svci-x.y.z-n.noarch.rpm```
   - On DEB based systems: ```sudo dpkg -i svci_x.y.z-n_all.deb```
 - Copy the **/opt/svci/doc/svci.toml** configuration example into **/etc/svci.toml** and edit the configuration to suit your environment. The location of the configuration file can optionally be changed with the *--conf* option.
-- Run the **/opt/svci/bin/svci** program in a shell, as a @reboot cron task or configure as a proper service - there are instructions in the [doc/readme-service.md](doc/readme-service.md) file.
+- Run the **/opt/svci/bin/svci** program in a shell, as a @reboot cron task or configure as a proper service - there are instructions in the [doc/](doc/) folder.
 - When started, *svci* expects the InfluxDB database to exist already.
 
 ### 3 - Grafana Configuration
 
 - Configure Grafana to use InfluxDB as a new datasource
-  - **NOTE:** set *Min time interval* to *30s* or *1m* depending on your SVCi *update* setting.
+  - **NOTE:** set *Min time interval* depending on your SVCi *refresh* setting.
 - Import example dashboards from [doc/dashboards/*.json](doc/dashboards/) into Grafana as a starting point and get creative making your own cool dashboards - please share anything useful :)
 
 ## Notes
