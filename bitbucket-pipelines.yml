@@ -2,7 +2,7 @@ image: eclipse-temurin:8-jdk
 
 pipelines:
   branches:
-    master:
+    main:
       - step:
           caches:
             - gradle
