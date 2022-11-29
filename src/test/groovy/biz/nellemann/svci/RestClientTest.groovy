@@ -64,7 +64,7 @@ class RestClientTest extends Specification {
 
     def "Test SVC Login"() {
         setup:
-        def responseFile = new File(getClass().getResource('/svc-auth-response.json').toURI())
+        def responseFile = new File(getClass().getResource('/json/svc-auth-response.json').toURI())
         def req = HttpRequest.request()
             .withHeader("X-Auth-Username", "superuser")
             .withHeader("X-Auth-Password", "password")

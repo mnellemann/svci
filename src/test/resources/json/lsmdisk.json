@@ -1,0 +1,42 @@
+[
+  {
+    "id": "0",
+    "name": "MDisk1",
+    "status": "online",
+    "mode": "array",
+    "mdisk_grp_id": "0",
+    "mdisk_grp_name": "Pool0",
+    "capacity": "49.2TB",
+    "ctrl_LUN_#": "",
+    "controller_name": "",
+    "UID": "",
+    "tier": "tier1_flash",
+    "encrypt": "no",
+    "site_id": "",
+    "site_name": "",
+    "distributed": "yes",
+    "dedupe": "no",
+    "over_provisioned": "no",
+    "supports_unmap": "yes"
+  },
+  {
+    "id": "16",
+    "name": "MDisk2",
+    "status": "online",
+    "mode": "array",
+    "mdisk_grp_id": "1",
+    "mdisk_grp_name": "Pool1",
+    "capacity": "11.8TB",
+    "ctrl_LUN_#": "",
+    "controller_name": "",
+    "UID": "",
+    "tier": "tier_enterprise",
+    "encrypt": "no",
+    "site_id": "",
+    "site_name": "",
+    "distributed": "yes",
+    "dedupe": "no",
+    "over_provisioned": "no",
+    "supports_unmap": "no"
+  }
+]

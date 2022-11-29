@@ -8,10 +8,7 @@ public class SvcConfiguration {
     public String url;
     public String username;
     public String password;
-
     public Integer refresh = 30;
-    public Integer discover = 120;
-
     public Boolean trust = true;
 
 }

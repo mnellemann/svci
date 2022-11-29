@@ -13,6 +13,5 @@ url = "https://10.10.10.18:7443"
 username = "superuser"
 password = "password"
 refresh = 29
-discover = 59
 trust = true   # Ignore SSL cert. errors
 

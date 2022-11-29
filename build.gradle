@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.14.1'
 
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.4'
     testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
     testImplementation "org.mock-server:mockserver-netty-no-dependencies:5.14.0"
 }

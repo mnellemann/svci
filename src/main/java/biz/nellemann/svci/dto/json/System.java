@@ -1,7 +1,9 @@
 package biz.nellemann.svci.dto.json;
 
+import biz.nellemann.svci.CapacityToDoubleConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class System {
@@ -9,6 +11,9 @@ public class System {
     public String name;
 
     public String location;
+
+    @JsonProperty("time_zone")
+    public String timeZone;
 
     @JsonProperty("statistics_status")
     public String statisticsStatus;
@@ -22,21 +27,32 @@ public class System {
     @JsonProperty("product_name")
     public String productName;
 
+    @JsonProperty("total_mdisk_capacity")
+    @JsonDeserialize(converter = CapacityToDoubleConverter.class)
+    public Double mDiskTotalTB;
+
+    @JsonProperty("space_allocated_to_vdisks")
+    @JsonDeserialize(converter = CapacityToDoubleConverter.class)
+    public Double vDiskAllocatedTB;
+
+    @JsonProperty("total_vdisk_capacity")
+    @JsonDeserialize(converter = CapacityToDoubleConverter.class)
+        public Double vDiskTotalTB;
+
+    @JsonProperty("total_free_space")
+    @JsonDeserialize(converter = CapacityToDoubleConverter.class)
+    public Double totalFreeTB;
+
+    @JsonProperty("total_used_capacity")
+    @JsonDeserialize(converter = CapacityToDoubleConverter.class)
+    public Double totalUsedTB;
+
 
     /**
-
-     "id": "000001002100613E",
-     "name": "V7000_A2U12",
-     "location": "local",
      "partnership": "",
-     "total_mdisk_capacity": "60.9TB",
      "space_in_mdisk_grps": "60.9TB",
-     "space_allocated_to_vdisks": "2.87TB",
-     "total_free_space": "58.0TB",
      "total_vdiskcopy_capacity": "20.42TB",
-     "total_used_capacity": "2.60TB",
      "total_overallocation": "33",
-     "total_vdisk_capacity": "20.42TB",
      "total_allocated_extent_capacity": "2.92TB",
      "statistics_status": "on",
      "statistics_frequency": "5",
@@ -154,6 +170,6 @@ public class System {
      "automatic_vdisk_analysis_enabled": "on",
      "callhome_accepted_usage": "no",
      "safeguarded_copy_suspended": "no"
-
      */
+
 }

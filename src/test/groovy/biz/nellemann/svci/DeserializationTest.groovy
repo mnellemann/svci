@@ -25,7 +25,7 @@ class DeserializationTest extends Specification {
     void "lssystem"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/lssystem.json').toURI())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/lssystem.json').toURI())
         System system = mapper.readerFor(System.class).readValue(testConfigurationFile.toFile())
 
         then:
@@ -33,13 +33,15 @@ class DeserializationTest extends Specification {
         system.location == "local"
         system.codeLevel == "8.4.2.0 (build 154.20.2109031944000)"
         system.productName == "IBM Storwize V7000"
+        system.totalUsedTB == 2.6
+        system.totalFreeTB == 58.0
     }
 
 
     void "lsnodestat"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/lsnodestats.json').toURI())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/lsnodestats.json').toURI())
         List<NodeStat> nodeStats = Arrays.asList(mapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:
@@ -53,7 +55,7 @@ class DeserializationTest extends Specification {
     void "lsenclosurestats"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/lsenclosurestats.json').toURI())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/lsenclosurestats.json').toURI())
         List<EnclosureStat> enclosureStats = Arrays.asList(mapper.readerFor(EnclosureStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:

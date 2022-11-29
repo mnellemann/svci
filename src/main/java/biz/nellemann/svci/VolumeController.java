@@ -15,8 +15,7 @@
  */
 package biz.nellemann.svci;
 
-import biz.nellemann.svci.dto.json.EnclosureStat;
-import biz.nellemann.svci.dto.json.NodeStat;
+import biz.nellemann.svci.dto.json.*;
 import biz.nellemann.svci.dto.json.System;
 import biz.nellemann.svci.dto.toml.SvcConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,25 +37,17 @@ class VolumeController implements Runnable {
 
     private final static Logger log = LoggerFactory.getLogger(VolumeController.class);
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private final Integer refreshValue;
-    private final Integer discoverValue;
-    //private final List<ManagedSystem> managedSystems = new ArrayList<>();
-
-
     private final RestClient restClient;
     private final InfluxClient influxClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final AtomicBoolean keepRunning = new AtomicBoolean(true);
-
-    protected Integer responseErrors = 0;
 
     protected System system;
 
 
     VolumeController(SvcConfiguration configuration, InfluxClient influxClient) {
         this.refreshValue = configuration.refresh;
-        this.discoverValue = configuration.discover;
         this.influxClient = influxClient;
         restClient = new RestClient(configuration.url, configuration.username, configuration.password, configuration.trust);
 
@@ -67,9 +58,7 @@ class VolumeController implements Runnable {
     public void run() {
 
         log.trace("run()");
-
         restClient.login();
-        discover();
 
         do {
             Instant instantStart = Instant.now();
@@ -96,7 +85,7 @@ class VolumeController implements Runnable {
                     log.error("run() - sleep interrupted", e);
                 }
             } else {
-                log.warn("run() - possible slow response from this HMC");
+                log.warn("run() - possible slow response from this SVC");
             }
 
         } while (keepRunning.get());
@@ -104,16 +93,12 @@ class VolumeController implements Runnable {
     }
 
 
-    void discover() {
-        log.debug("discover()");
-        influxClient.write(getSystem(), Instant.now(),"system");
-    }
-
-
     void refresh() {
         log.debug("refresh()");
+        influxClient.write(getSystem(), Instant.now(),"system");
         influxClient.write(getNodeStats(), Instant.now(),"node_stats");
         influxClient.write(getEnclosureStats(), Instant.now(),"enclosure_stats");
+        influxClient.write(getMDiskGroups(), Instant.now(),"m_disk_groups");
     }
 
 
@@ -139,8 +124,13 @@ class VolumeController implements Runnable {
             fieldsMap.put("location", system.location);
             fieldsMap.put("code_level", system.codeLevel);
             fieldsMap.put("product_name", system.productName);
+            fieldsMap.put("total_free_tb", system.totalFreeTB);
+            fieldsMap.put("total_used_tb", system.totalUsedTB);
+            fieldsMap.put("mdisk_total_tb", system.mDiskTotalTB);
+            fieldsMap.put("vdisk_total_tb", system.vDiskTotalTB);
+            fieldsMap.put("vdisk_allocated_tb", system.vDiskAllocatedTB);
 
-            log.trace("getNodeStats() - fields: " + fieldsMap);
+            log.trace("getSystem() - fields: " + fieldsMap);
 
             measurementList.add(new Measurement(tagsMap, fieldsMap));
         } catch (IOException e) {
@@ -158,13 +148,13 @@ class VolumeController implements Runnable {
             String response = restClient.postRequest("/rest/v1/lsnodestats");
 
             // Do not try to parse empty response
-            if(response == null || response.length() <= 1) {
+            if(system == null || response == null || response.length() <= 1) {
                 log.warn("getNodeStats() - no data.");
                 return measurementList;
             }
 
-            List<NodeStat> pojo = Arrays.asList(objectMapper.readValue(response, NodeStat[].class));
-            pojo.forEach((stat) -> {
+            List<NodeStat> list = Arrays.asList(objectMapper.readValue(response, NodeStat[].class));
+            list.forEach( (stat) -> {
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -188,6 +178,7 @@ class VolumeController implements Runnable {
         return measurementList;
     }
 
+
     List<Measurement> getEnclosureStats() {
         List<Measurement> measurementList = new ArrayList<>();
 
@@ -195,13 +186,13 @@ class VolumeController implements Runnable {
             String response = restClient.postRequest("/rest/v1/lsenclosurestats");
 
             // Do not try to parse empty response
-            if(response == null || response.length() <= 1) {
+            if(system == null || response == null || response.length() <= 1) {
                 log.warn("getEnclosureStats() - no data.");
                 return measurementList;
             }
 
-            List<EnclosureStat> pojo = Arrays.asList(objectMapper.readValue(response, EnclosureStat[].class));
-            pojo.forEach((stat) -> {
+            List<EnclosureStat> list = Arrays.asList(objectMapper.readValue(response, EnclosureStat[].class));
+            list.forEach( (stat) -> {
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -219,6 +210,88 @@ class VolumeController implements Runnable {
 
         } catch (IOException e) {
             log.error("getEnclosureStats() - error 2: {}", e.getMessage());
+        }
+
+        return measurementList;
+    }
+
+
+    List<Measurement> getVDisk() {
+        List<Measurement> measurementList = new ArrayList<>();
+
+        try {
+            String response = restClient.postRequest("/rest/v1/lsvdisk");
+
+            // Do not try to parse empty response
+            if(system == null || response == null || response.length() <= 1) {
+                log.warn("getVDisk() - no data.");
+                return measurementList;
+            }
+
+            List<VDisk> list = Arrays.asList(objectMapper.readValue(response, VDisk[].class));
+            list.forEach( (stat) -> {
+
+                HashMap<String, String> tagsMap = new HashMap<>();
+                HashMap<String, Object> fieldsMap = new HashMap<>();
+
+                tagsMap.put("id", stat.id);
+                tagsMap.put("name", stat.name);
+                tagsMap.put("type", stat.type);
+                tagsMap.put("system", system.name);
+
+                fieldsMap.put("capacity_tb", stat.capacity);
+                log.trace("getVDisk() - fields: " + fieldsMap);
+
+                measurementList.add(new Measurement(tagsMap, fieldsMap));
+
+                //log.info("{}: {} -> {}", stat.nodeName, stat.statName, stat.statCurrent);
+            });
+
+        } catch (IOException e) {
+            log.error("getVDisk() - error 2: {}", e.getMessage());
+        }
+
+        return measurementList;
+    }
+
+    List<Measurement> getMDiskGroups() {
+        List<Measurement> measurementList = new ArrayList<>();
+
+        try {
+            String response = restClient.postRequest("/rest/v1/lsmdiskgrp");
+
+            // Do not try to parse empty response
+            if(system == null || response == null || response.length() <= 1) {
+                log.warn("getMDiskGroups() - no data.");
+                return measurementList;
+            }
+
+            List<MDiskGroup> list = Arrays.asList(objectMapper.readValue(response, MDiskGroup[].class));
+            list.forEach( (stat) -> {
+
+                HashMap<String, String> tagsMap = new HashMap<>();
+                HashMap<String, Object> fieldsMap = new HashMap<>();
+
+                tagsMap.put("id", stat.id);
+                tagsMap.put("name", stat.name);
+                tagsMap.put("system", system.name);
+
+                fieldsMap.put("mdisk_count", stat.mDiskCount);
+                fieldsMap.put("vdisk_count", stat.vDiskCount);
+                fieldsMap.put("capacity_free_tb", stat.capacityFree);
+                fieldsMap.put("capacity_real_tb", stat.capacityReal);
+                fieldsMap.put("capacity_used_tb", stat.capacityUsed);
+                fieldsMap.put("capacity_total_tb", stat.capacityTotal);
+                fieldsMap.put("capacity_virtual_tb", stat.capacityVirtual);
+                log.trace("getMDiskGroups() - fields: " + fieldsMap);
+
+                measurementList.add(new Measurement(tagsMap, fieldsMap));
+
+                //log.info("{}: {} -> {}", stat.nodeName, stat.statName, stat.statCurrent);
+            });
+
+        } catch (IOException e) {
+            log.error("getMDiskGroups() - error 2: {}", e.getMessage());
         }
 
         return measurementList;

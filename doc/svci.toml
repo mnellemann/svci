@@ -12,7 +12,6 @@ database = "svci"
 url = "https://10.10.10.12:7443"
 username = "superuser"
 password = "password"
-refresh = 10
-discover = 120
+refresh = 30
 trust = true   # Ignore SSL cert. errors
 
