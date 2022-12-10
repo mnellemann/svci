@@ -24,8 +24,8 @@ dependencies {
     implementation 'info.picocli:picocli:4.7.0'
     implementation 'org.influxdb:influxdb-java:2.23'
     //implementation 'com.influxdb:influxdb-client-java:6.7.0'
-    implementation 'org.slf4j:slf4j-api:2.0.4'
-    implementation 'org.slf4j:slf4j-simple:2.0.4'
+    implementation 'org.slf4j:slf4j-api:2.0.5'
+    implementation 'org.slf4j:slf4j-simple:2.0.5'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0' // Also used by InfluxDB Client
     //implementation "org.eclipse.jetty:jetty-client:9.4.49.v20220914"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'

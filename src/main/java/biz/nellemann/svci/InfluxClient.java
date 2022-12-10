@@ -107,7 +107,7 @@ public final class InfluxClient {
         List<Point> listOfPoints = new ArrayList<>();
         measurements.forEach( (m) -> {
             Point.Builder builder = Point.measurement(measurement)
-                .time(timestamp.toEpochMilli(), TimeUnit.MILLISECONDS)
+                .time(timestamp.getEpochSecond(), TimeUnit.SECONDS)
                 .tag(m.tags)
                 .fields(m.fields);
             listOfPoints.add(builder.build());
