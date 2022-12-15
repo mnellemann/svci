@@ -1,8 +1,8 @@
-# SVC Insights
+# Spectrum Virtualize Insights
 
 **SVCi** is a utility that collects metrics from one or more *IBM SAN Volume Controllers*. The metric data is processed and saved into an InfluxDB time-series database. Grafana is used to visualize the metrics data from InfluxDB through provided dashboards, or your own customized dashboards.
 
-This software is free to use and is licensed under the [Apache 2.0 License](https://bitbucket.org/mnellemann/svci/src/master/LICENSE), but is not supported or endorsed by International Business Machines (IBM).
+This software is free to use and is licensed under the [Apache 2.0 License](LICENSE), but is not supported or endorsed by International Business Machines (IBM).
 
 ![architecture](doc/SVCi.png)
 
@@ -35,7 +35,7 @@ Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on po
 
 - Ensure you have **correct date/time** and NTPd running to keep it accurate!
 - The only requirement for **svci** is the Java runtime, version 8 (or later)
-- Install **SVCi** from [downloads](https://bitbucket.org/mnellemann/svci/downloads/) (rpm, deb or jar) or build from source
+- Install **SVCi** from [downloads](downloads/) (rpm, deb or jar) or build from source
   - On RPM based systems: ```sudo rpm -ivh svci-x.y.z-n.noarch.rpm```
   - On DEB based systems: ```sudo dpkg -i svci_x.y.z-n_all.deb```
 - Copy the **/opt/svci/doc/svci.toml** configuration example into **/etc/svci.toml** and edit the configuration to suit your environment. The location of the configuration file can optionally be changed with the *--conf* option.
