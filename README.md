@@ -6,6 +6,12 @@ This software is free to use and is licensed under the [Apache 2.0 License](http
 
 ![architecture](doc/SVCi.png)
 
+Some of my other related projects are:
+
+- [hmci](https://bitbucket.org/mnellemann/hmci) for agent-less monitoring of IBM Power servers
+- [sysmon](https://bitbucket.org/mnellemann/sysmon) for monitoring all types of servers with a small Java agent
+- [syslogd](https://bitbucket.org/mnellemann/syslogd) for redirecting syslog and GELF to remote logging destinations
+
 
 ## Installation and Setup
 
