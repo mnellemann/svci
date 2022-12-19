@@ -17,11 +17,16 @@ Some of my other related projects are:
 
 There are few steps in the installation.
 
-1. Installation of InfluxDB and Grafana software
-2. Installation and configuration of *SVC Insights* (SVCi)
-3. Configure Grafana and import example dashboards
+1. Prepare your Spectrum Virtualize
+2. Installation of InfluxDB and Grafana software
+3. Installation and configuration of *SVC Insights* (SVCi)
+4. Configure Grafana and import example dashboards
 
-### 1 - InfluxDB and Grafana Installation
+### 1 - Prepare Spectrum Virtualize
+
+- Create a user with the "Monitor" role
+
+### 2 - InfluxDB and Grafana Installation
 
 Install InfluxDB (v. **1.8.x** or **1.9.x** for best compatibility with Grafana) on a host which is network accessible by the SVCi utility (the default InfluxDB port is 8086). You can install Grafana on the same server or any server which are able to connect to the InfluxDB database. The Grafana installation needs to be accessible from your browser (default on port 3000). The default settings for both InfluxDB and Grafana will work fine as a start.
 
@@ -35,7 +40,7 @@ CREATE DATABASE "svci" WITH DURATION 365d REPLICATION 1;
 
 See the [Influx documentation](https://docs.influxdata.com/influxdb/v1.8/query_language/manage-database/#create-database) for more information on duration and replication.
 
-### 2 - SVCi Installation & Configuration
+### 3 - SVCi Installation & Configuration
 
 Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on port 7443), and is also allowed to connect to the InfluxDB service. This *can be* the same LPAR/VM as used for the InfluxDB installation.
 
@@ -48,7 +53,7 @@ Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on po
 - Run the **/opt/svci/bin/svci** program in a shell, as a @reboot cron task or configure as a proper service - there are instructions in the [doc/](doc/) folder.
 - When started, *svci* expects the InfluxDB database to exist already.
 
-### 3 - Grafana Configuration
+### 4 - Grafana Configuration
 
 - Configure Grafana to use InfluxDB as a new datasource
   - **NOTE:** set *Min time interval* depending on your SVCi *refresh* setting.

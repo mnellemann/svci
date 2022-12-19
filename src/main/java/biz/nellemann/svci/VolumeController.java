@@ -50,7 +50,6 @@ class VolumeController implements Runnable {
         this.refreshValue = configuration.refresh;
         this.influxClient = influxClient;
         restClient = new RestClient(configuration.url, configuration.username, configuration.password, configuration.trust);
-
     }
 
 
@@ -296,4 +295,5 @@ class VolumeController implements Runnable {
 
         return measurementList;
     }
+
 }
