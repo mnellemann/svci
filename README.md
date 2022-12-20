@@ -113,6 +113,11 @@ rpm -Uvh --ignoreos svci-x.y.z-n.noarch.rpm
 ```
 
 
+## Screenshots
+
+Screenshots of the provided Grafana dashboard can be found in the [doc/screenshots/](doc/screenshots) folder.
+
+
 ## Known problems
 
 
