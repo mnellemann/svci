@@ -30,16 +30,22 @@ public class CapacityToDoubleConverter extends StdConverter<String, Double> {
         log.debug("Input: {} {}", input, unit);
 
         double output = input;
-        if(unit.equals("PB")) {
-            output = input * 1000;
-        } else if(unit.equals("TB")) {
-            output = input;
-        } else if(unit.equals("GB")) {
-            output = input / 1000;
-        } else if(unit.equals("MB")) {
-            output = input / 1_000_000;
-        } else {
-            log.warn("convert() - Unit {} not supported.", unit);
+        switch (unit) {
+            case "PB":
+                output = input * 1000;
+                break;
+            case "TB":
+                output = input;
+                break;
+            case "GB":
+                output = input / 1000;
+                break;
+            case "MB":
+                output = input / 1_000_000;
+                break;
+            default:
+                log.warn("convert() - Unit {} not supported.", unit);
+                break;
         }
 
         log.debug("Output: {} TB", output);

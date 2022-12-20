@@ -22,10 +22,10 @@ class DeserializationTest extends Specification {
     }
 
 
-    void "lssystem"() {
+    void "lssystem v8_4"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/json/lssystem.json').toURI())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.4/lssystem.json').toURI())
         System system = mapper.readerFor(System.class).readValue(testConfigurationFile.toFile())
 
         then:
@@ -38,10 +38,10 @@ class DeserializationTest extends Specification {
     }
 
 
-    void "lsnodestat"() {
+    void "lsnodestat v8_4"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/json/lsnodestats.json').toURI())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.4/lsnodestats.json').toURI())
         List<NodeStat> nodeStats = Arrays.asList(mapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:
@@ -52,10 +52,24 @@ class DeserializationTest extends Specification {
     }
 
 
-    void "lsenclosurestats"() {
+    void "lsnodestat v8_5"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/json/lsenclosurestats.json').toURI())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.5/lsnodestats_8.5.2.2.json').toURI())
+        List<NodeStat> nodeStats = Arrays.asList(mapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
+
+        then:
+        nodeStats.size() == 92
+        nodeStats.get(3).nodeName == "node1"
+        nodeStats.get(3).statName == "fc_io"
+        nodeStats.get(3).statCurrent == 2115
+    }
+
+
+    void "lsenclosurestats v8_4"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.4/lsenclosurestats.json').toURI())
         List<EnclosureStat> enclosureStats = Arrays.asList(mapper.readerFor(EnclosureStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:
