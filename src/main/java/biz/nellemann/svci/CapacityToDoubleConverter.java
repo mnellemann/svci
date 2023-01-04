@@ -30,7 +30,7 @@ public class CapacityToDoubleConverter extends StdConverter<String, Double> {
         log.debug("Input: {} {}", input, unit);
 
         double output = input;
-        switch (unit) {
+        switch (unit.toUpperCase()) {
             case "PB":
                 output = input * 1000;
                 break;

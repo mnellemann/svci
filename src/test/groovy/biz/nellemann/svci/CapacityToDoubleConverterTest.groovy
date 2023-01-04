@@ -26,6 +26,13 @@ class CapacityToDoubleConverterTest extends Specification {
         result == 1024000.0
     }
 
+    def "convert from PB (lowercase) String to TB Double"() {
+        when:
+        def result = converter.convert("1024.0pb")
+
+        then:
+        result == 1024000.0
+    }
 
     def "convert from GB String to TB Double"() {
         when:

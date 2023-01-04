@@ -6,9 +6,9 @@ plugins {
     // Code coverage of tests
     id 'jacoco'
 
-    id "com.github.johnrengelman.shadow" version "7.1.2"
     id "net.nemerosa.versioning" version "2.15.1"
-    id "nebula.ospackage" version "9.1.1"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.netflix.nebula.ospackage" version "10.0.0"
 }
 
 repositories {
@@ -24,8 +24,8 @@ dependencies {
     implementation 'info.picocli:picocli:4.7.0'
     implementation 'org.influxdb:influxdb-java:2.23'
     //implementation 'com.influxdb:influxdb-client-java:6.7.0'
-    implementation 'org.slf4j:slf4j-api:2.0.5'
-    implementation 'org.slf4j:slf4j-simple:2.0.5'
+    implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation 'org.slf4j:slf4j-simple:2.0.6'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0' // Also used by InfluxDB Client
     //implementation "org.eclipse.jetty:jetty-client:9.4.49.v20220914"
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
@@ -51,8 +51,6 @@ test {
     useJUnitPlatform()
 }
 
-
-apply plugin: 'nebula.ospackage'
 ospackage {
     packageName = 'svci'
     release = '1'
@@ -128,7 +126,7 @@ jar {
     }
 }
 
-tasks.create("packages") {
+tasks.register("packages") {
     group "build"
     dependsOn ":build"
     dependsOn ":buildDeb"
