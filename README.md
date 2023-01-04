@@ -9,7 +9,7 @@ This software is free to use and is licensed under the [Apache 2.0 License](LICE
 Some of my other related projects are:
 
 - [hmci](https://bitbucket.org/mnellemann/hmci) for agent-less monitoring of IBM Power servers
-- [sysmon](https://bitbucket.org/mnellemann/sysmon) for monitoring all types of servers with a small Java agent
+- [sysmon](https://git.data.coop/nellemann/sysmon) for monitoring all types of servers with a small Java agent
 - [syslogd](https://git.data.coop/nellemann/syslogd) for redirecting syslog and GELF to remote logging destinations
 
 
@@ -46,7 +46,7 @@ Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on po
 
 - Ensure you have **correct date/time** and NTPd running to keep it accurate!
 - The only requirement for **svci** is the Java runtime, version 8 (or later)
-- Install **SVCi** from [downloads](downloads/) (rpm, deb or jar) or build from source
+- Install **SVCi** from from [packages](https://git.data.coop/nellemann/-/packages/generic/svci/) (rpm, deb or jar) or build from source
   - On RPM based systems: ```sudo rpm -ivh svci-x.y.z-n.noarch.rpm```
   - On DEB based systems: ```sudo dpkg -i svci_x.y.z-n_all.deb```
 - Copy the **/opt/svci/doc/svci.toml** configuration example into **/etc/svci.toml** and edit the configuration to suit your environment. The location of the configuration file can optionally be changed with the *--conf* option.
