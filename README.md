@@ -8,7 +8,7 @@ This software is free to use and is licensed under the [Apache 2.0 License](LICE
 
 Some of my other related projects are:
 
-- [hmci](https://bitbucket.org/mnellemann/hmci) for agent-less monitoring of IBM Power servers
+- [hmci](https://git.data.coop/nellemann/hmci) for agent-less monitoring of IBM Power servers
 - [sysmon](https://git.data.coop/nellemann/sysmon) for monitoring all types of servers with a small Java agent
 - [syslogd](https://git.data.coop/nellemann/syslogd) for redirecting syslog and GELF to remote logging destinations
 
