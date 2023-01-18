@@ -41,8 +41,9 @@ When logged in to Grafana (port 3000, admin/admin) create a datasource that poin
 
 ## Download and Install SVCi
 
+[Download](https://git.data.coop/nellemann/-/packages/generic/svci/) the latest version of SVCi packaged for rpm.
+
 ```shell
-wget https://bitbucket.org/mnellemann/svci/downloads/svci-0.0.1-1_all.rpm
 rpm -ivh svci-0.0.1-1_all.rpm
 cp /opt/svci/doc/svci.toml /etc/
 cp /opt/svci/doc/svci.service /etc/systemd/system/

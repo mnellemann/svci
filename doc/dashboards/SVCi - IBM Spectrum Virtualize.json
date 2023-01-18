@@ -76,7 +76,7 @@
       }
     ]
   },
-  "description": "https://bitbucket.org/mnellemann/svci/",
+  "description": "https://git.data.coop/nellemann/svci",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -97,7 +97,7 @@
       },
       "id": 16,
       "options": {
-        "content": "## Metrics collected from IBM Spectrum Virtualize\n    \nFor more information: [bitbucket.org/mnellemann/svci](https://bitbucket.org/mnellemann/svci)\n           ",
+        "content": "## Metrics collected from IBM Spectrum Virtualize\n    \nFor more information: [https://git.data.coop/nellemann/svci](https://git.data.coop/nellemann/svci)\n           ",
         "mode": "markdown"
       },
       "pluginVersion": "9.1.6",
