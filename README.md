@@ -13,6 +13,11 @@ Some of my other related projects are:
 - [syslogd](https://git.data.coop/nellemann/syslogd) for redirecting syslog and GELF to remote logging destinations
 
 
+## Screenshots
+
+![screenshot](doc/screenshots/v7000-8_4_2_0-1.png)
+
+
 ## Installation and Setup
 
 There are few steps in the installation.
