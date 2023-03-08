@@ -1,4 +1,4 @@
-# Spectrum Virtualize Insights
+# Spectrum Virtualize Insights / SVCi
 
 **SVCi** is a utility that collects metrics from one or more *IBM SAN Volume Controllers*. The metric data is processed and saved into an InfluxDB time-series database. Grafana is used to visualize the metrics data from InfluxDB through provided dashboards, or your own customized dashboards.
 
@@ -16,6 +16,8 @@ Some of my other related projects are:
 ## Screenshots
 
 ![screenshot](doc/screenshots/v7000-8_4_2_0-1.png)
+
+More screenshots can be found in the [doc/screenshots/](doc/screenshots) folder.
 
 
 ## Installation and Setup
@@ -35,8 +37,6 @@ There are few steps in the installation.
 
 Install InfluxDB (v. **1.8.x** or **1.9.x** for best compatibility with Grafana) on a host which is network accessible by the SVCi utility (the default InfluxDB port is 8086). You can install Grafana on the same server or any server which are able to connect to the InfluxDB database. The Grafana installation needs to be accessible from your browser (default on port 3000). The default settings for both InfluxDB and Grafana will work fine as a start.
 
-- You can download [Grafana ppc64le](https://www.power-devops.com/grafana) and [InfluxDB ppc64le](https://www.power-devops.com/influxdb) packages for most Linux distributions and AIX on the [Power DevOps](https://www.power-devops.com/) site.
-- Binaries for amd64/x86 are available from the [Grafana website](https://grafana.com/grafana/download) (select the **OSS variant**) and [InfluxDB website](https://portal.influxdata.com/downloads/) and most likely directly from your Linux distributions repositories.
 - Create the empty *svci* database by running the **influx** CLI command and type:
 
 ```text
@@ -70,16 +70,6 @@ Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on po
 
 This is most likely due to timezone, date and/or NTP not being configured correctly on the SAN Volune Controller and/or host running SVCi.
 
-### Start InfluxDB and Grafana at boot (systemd compatible Linux)
-
-```shell
-systemctl enable influxdb
-systemctl start influxdb
-
-systemctl enable grafana-server
-systemctl start grafana-server
-```
-
 ### InfluxDB Retention Policy
 
 Examples for changing the default InfluxDB retention policy for the svci database:
@@ -107,23 +97,6 @@ Restart the SVCi service on *systemd* based Linux systems:
 systemctl restart svci
 journalctl -f -u svci  # to check log output
 ```
-
-
-### AIX Notes
-
-To install (or upgrade) on AIX, you need to pass the *--ignoreos* flag to the *rpm* command:
-
-```shell
-rpm -Uvh --ignoreos svci-x.y.z-n.noarch.rpm
-```
-
-
-## Screenshots
-
-Screenshots of the provided Grafana dashboard can be found in the [doc/screenshots/](doc/screenshots) folder.
-
-
-## Known problems
 
 
 ## Development Information
@@ -166,5 +139,4 @@ docker run --name grafana --link influxdb:influxdb --rm -d -p 3000:3000 grafana/
 
 Setup Grafana to connect to the InfluxDB container by defining a new datasource on URL *http://influxdb:8086* named *svci*.
 
-
-Grafana dashboards can be imported from the *doc/dashboards/* folder.
+Import dashboards from the [doc/dashboards/](doc/dashboards/) folder.
