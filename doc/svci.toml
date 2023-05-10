@@ -12,18 +12,15 @@ password = ""
 database = "svci"
 
 
-
 ###
 ### Define one or more SVC's to query for metrics
 ### Each entry must be named [svc.<something-unique>]
 ###
 
-
-# SVC to query for data and metrics
 [svc.site1]
 url = "https://10.10.10.5:7443"
 username = "superuser"
 password = "password"
-refresh = 30   # How often to query HMC for data - in seconds
+refresh = 30   # How often to query SVC for data - in seconds
 trust = true   # Ignore SSL cert. errors (due to default self-signed cert.)
 
