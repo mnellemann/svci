@@ -28,7 +28,7 @@ There are few steps in the installation.
 
 ### 2 - InfluxDB and Grafana Installation
 
-Install InfluxDB (v. **1.8.x** or **1.9.x** for best compatibility with Grafana) on a host which is network accessible by the SVCi utility (the default InfluxDB port is 8086). You can install Grafana on the same server or any server which are able to connect to the InfluxDB database. The Grafana installation needs to be accessible from your browser (default on port 3000). The default settings for both InfluxDB and Grafana will work fine as a start.
+Install InfluxDB (v. **1.8** or later) on a host which is network accessible by the SVCi utility (the default InfluxDB port is 8086). You can install Grafana on the same server or any server which are able to connect to the InfluxDB database. The Grafana installation needs to be accessible from your browser (default on port 3000). The default settings for both InfluxDB and Grafana will work fine as a start.
 
 - You can download [Grafana ppc64le](https://www.power-devops.com/grafana) and [InfluxDB ppc64le](https://www.power-devops.com/influxdb) packages for most Linux distributions and AIX on the [Power DevOps](https://www.power-devops.com/) site.
 - Binaries for amd64/x86 are available from the [Grafana website](https://grafana.com/grafana/download) (select the **OSS variant**) and [InfluxDB website](https://portal.influxdata.com/downloads/) and most likely directly from your Linux distributions repositories.
@@ -121,9 +121,10 @@ Screenshots of the provided Grafana dashboard can be found in the [doc/screensho
 ## Known problems
 
 
+
 ## Development Information
 
-You need Java (JDK) version 8 or later to build svci.
+You need Java (JDK) version 8 or later to build hmci.
 
 
 ### Build & Test
@@ -136,24 +137,35 @@ Use the gradle build tool, which will download all required dependencies:
 
 ### Local Testing
 
-#### InfluxDB
+#### InfluxDB v1.x
 
-Start the InfluxDB container:
+Start a InfluxDB container:
 
 ```shell
 docker run --name=influxdb --rm -d -p 8086:8086 influxdb:1.8
 ```
 
-Create the *svci* database:
+Create the *hmci* database:
 
 ```shell
 docker exec -i influxdb influx -execute "CREATE DATABASE svci"
 ```
 
+#### InfluxDB v2.x
+
+Start a InfluxDB container:
+
+```shell
+docker run --name=influxdb --rm -d -p 8086:8086 influxdb:latest
+```
+
+- Then use the Web UI to create an initial user (for the web UI), an organization and bucket: http://localhost:8086/
+- Then create an API token with RW access to your bucket.
+
 
 #### Grafana
 
-Start the Grafana container, linking it to the InfluxDB container:
+Start a Grafana container, linking it to the InfluxDB container:
 
 ```shell
 docker run --name grafana --link influxdb:influxdb --rm -d -p 3000:3000 grafana/grafana
@@ -161,5 +173,5 @@ docker run --name grafana --link influxdb:influxdb --rm -d -p 3000:3000 grafana/
 
 Setup Grafana to connect to the InfluxDB container by defining a new datasource on URL *http://influxdb:8086* named *svci*.
 
-
-Grafana dashboards can be imported from the *doc/dashboards/* folder.
+If you are [connecting](https://docs.influxdata.com/influxdb/v2.7/tools/grafana/) to InfluxDB v2.x, then add a custom http header, enter bucket as database and disable authorization.
+- Authorization = Token abcdef_random_token_from_nfluxdb==

@@ -16,10 +16,12 @@
 package biz.nellemann.svci;
 
 import biz.nellemann.svci.dto.toml.InfluxConfiguration;
-import org.influxdb.BatchOptions;
-import org.influxdb.InfluxDB;
-import org.influxdb.InfluxDBFactory;
-import org.influxdb.dto.Point;
+import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.InfluxDBClientFactory;
+import com.influxdb.client.WriteApi;
+import com.influxdb.client.WriteOptions;
+import com.influxdb.client.domain.WritePrecision;
+import com.influxdb.client.write.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,23 +37,35 @@ public final class InfluxClient {
     private final static Logger log = LoggerFactory.getLogger(InfluxClient.class);
 
     final private String url;
-    final private String username;
-    final private String password;
-    final private String database;
+    final private String org;   // v2 only
+    final private String token;
+    final private String bucket;  // Bucket in v2, Database in v1
 
-    private InfluxDB influxDB;
+    private InfluxDBClient influxDBClient;
+    private WriteApi writeApi;
 
     InfluxClient(InfluxConfiguration config) {
         this.url = config.url;
-        this.username = config.username;
-        this.password = config.password;
-        this.database = config.database;
+        if(config.org != null) {
+            this.org = config.org;
+        } else {
+            this.org = "svci";  // In InfluxDB 1.x, there is no concept of organization.
+        }
+        if(config.token != null) {
+            this.token = config.token;
+        } else {
+            this.token = config.username + ":" + config.password;
+        }
+        if(config.bucket != null) {
+            this.bucket = config.bucket;
+        } else {
+            this.bucket = config.database;
+        }
     }
-
 
     synchronized void login() throws RuntimeException, InterruptedException {
 
-        if(influxDB != null) {
+        if(influxDBClient != null) {
             return;
         }
 
@@ -61,20 +75,20 @@ public final class InfluxClient {
         do {
             try {
                 log.debug("Connecting to InfluxDB - {}", url);
-                influxDB = InfluxDBFactory.connect(url, username, password).setDatabase(database);
-                influxDB.version(); // This ensures that we actually try to connect to the db
+                influxDBClient = InfluxDBClientFactory.create(url, token.toCharArray(), org, bucket);
+                influxDBClient.version(); // This ensures that we actually try to connect to the db
+                Runtime.getRuntime().addShutdownHook(new Thread(influxDBClient::close));
 
-                influxDB.enableBatch(
-                    BatchOptions.DEFAULTS
-                        .threadFactory(runnable -> {
-                            Thread thread = new Thread(runnable);
-                            thread.setDaemon(true);
-                            return thread;
-                        })
-                );
-                Runtime.getRuntime().addShutdownHook(new Thread(influxDB::close));
+                // Todo: Handle events - https://github.com/influxdata/influxdb-client-java/tree/master/client#handle-the-events
+                //writeApi = influxDBClient.makeWriteApi();
+                writeApi = influxDBClient.makeWriteApi(
+                    WriteOptions.builder()
+                        .bufferLimit(20_000)
+                        .flushInterval(5_000)
+                        .build());
 
                 connected = true;
+
             } catch(Exception e) {
                 sleep(15 * 1000);
                 if(loginErrors++ > 3) {
@@ -90,29 +104,32 @@ public final class InfluxClient {
 
 
     synchronized void logoff() {
-        if(influxDB != null) {
-            influxDB.close();
+        if(influxDBClient != null) {
+            influxDBClient.close();
         }
-        influxDB = null;
+        influxDBClient = null;
     }
 
 
-    public void write(List<Measurement> measurements, Instant timestamp, String measurement) {
-        log.debug("write() - measurement: {} {}", measurement, measurements.size());
-        processMeasurementMap(measurements, timestamp, measurement).forEach( (point) -> { influxDB.write(point); });
+    public void write(List<Measurement> measurements, String name) {
+        log.debug("write() - measurement: {} {}", name, measurements.size());
+        if(!measurements.isEmpty()) {
+            processMeasurementMap(measurements, name).forEach((point) -> {
+                writeApi.writePoint(point);
+            });
+        }
     }
 
-
-    private List<Point> processMeasurementMap(List<Measurement> measurements, Instant timestamp, String measurement) {
+    private List<Point> processMeasurementMap(List<Measurement> measurements, String name) {
         List<Point> listOfPoints = new ArrayList<>();
         measurements.forEach( (m) -> {
-            Point.Builder builder = Point.measurement(measurement)
-                .time(timestamp.getEpochSecond(), TimeUnit.SECONDS)
-                .tag(m.tags)
-                .fields(m.fields);
-            listOfPoints.add(builder.build());
+            log.trace("processMeasurementMap() - timestamp: {}, tags: {}, fields: {}", m.timestamp, m.tags, m.fields);
+            Point point = new Point(name)
+                .time(m.timestamp.getEpochSecond(), WritePrecision.S)
+                .addTags(m.tags)
+                .addFields(m.fields);
+            listOfPoints.add(point);
         });
-
         return listOfPoints;
     }
 
