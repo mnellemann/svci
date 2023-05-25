@@ -94,10 +94,10 @@ class VolumeController implements Runnable {
 
     void refresh() {
         log.debug("refresh()");
-        influxClient.write(getSystem(), Instant.now(),"system");
-        influxClient.write(getNodeStats(), Instant.now(),"node_stats");
-        influxClient.write(getEnclosureStats(), Instant.now(),"enclosure_stats");
-        influxClient.write(getMDiskGroups(), Instant.now(),"m_disk_groups");
+        influxClient.write(getSystem(),"system");
+        influxClient.write(getNodeStats(),"node_stats");
+        influxClient.write(getEnclosureStats(),"enclosure_stats");
+        influxClient.write(getMDiskGroups(), "m_disk_groups");
     }
 
 
