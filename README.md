@@ -114,7 +114,7 @@ Screenshots of the provided Grafana dashboard can be found in the [doc/screensho
 
 ## Development Information
 
-You need Java (JDK) version 8 or later to build hmci.
+You need Java (JDK) version 8 or later to build svci.
 
 
 ### Build & Test
@@ -135,7 +135,7 @@ Start a InfluxDB container:
 docker run --name=influxdb --rm -d -p 8086:8086 influxdb:1.8
 ```
 
-Create the *hmci* database:
+Create the *svci* database:
 
 ```shell
 docker exec -i influxdb influx -execute "CREATE DATABASE svci"
