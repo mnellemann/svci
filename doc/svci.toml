@@ -1,4 +1,5 @@
 # SVCi Configuration
+# Copy this file into /etc/svci.toml and customize it to your environment.
 
 ###
 ### Define one InfluxDB to save metrics into
@@ -25,11 +26,16 @@ bucket = "svci"
 ### Each entry must be named [svc.<something-unique>]
 ###
 
-# SVC on our primary site
+
+###
+### Define one or more SVC's to query for metrics
+### Each entry must be named [svc.<something-unique>]
+###
+
 [svc.site1]
-url = "https://10.10.10.12:7443"
+url = "https://10.10.10.5:7443"
 username = "superuser"
 password = "password"
-refresh = 30
-trust = true   # Ignore SSL cert. errors
+refresh = 30   # How often to query SVC for data - in seconds
+trust = true   # Ignore SSL cert. errors (due to default self-signed cert.)
 
