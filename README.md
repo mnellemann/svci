@@ -32,6 +32,7 @@ There are few steps in the installation.
 ### 1 - Prepare Spectrum Virtualize
 
 - Create a user with the "Monitor" role
+  - To start extended statistics, the user must be in the "Administrator" role (svctask startstats -interval 30)
 
 ### 2 - InfluxDB and Grafana Installation
 

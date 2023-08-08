@@ -63,7 +63,8 @@ public class RestClient {
                 .addHeader("X-Auth-Username", username)
                 .addHeader("X-Auth-Password", password)
                 //.put(RequestBody.create(payload.toString(), MEDIA_TYPE_IBM_XML_LOGIN))
-                .post(RequestBody.create("", MediaType.get("text/plain")))
+                //.post(RequestBody.create("", MediaType.get("text/plain")))
+                .post(RequestBody.create("", MediaType.parse("application/json")))
                 .build();
 
             String responseBody;
