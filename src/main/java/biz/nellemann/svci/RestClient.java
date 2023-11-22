@@ -1,23 +1,30 @@
 package biz.nellemann.svci;
 
-import biz.nellemann.svci.dto.json.AuthResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import biz.nellemann.svci.dto.json.AuthResponse;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RestClient {
 
@@ -83,7 +90,7 @@ public class RestClient {
             authToken = authResponse.token;
             log.debug("logon() - auth token: {}", authToken);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             log.warn("logon() - error: {}", e.getMessage());
         }
 

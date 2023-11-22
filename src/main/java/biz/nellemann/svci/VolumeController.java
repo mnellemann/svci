@@ -15,14 +15,8 @@
  */
 package biz.nellemann.svci;
 
-import biz.nellemann.svci.dto.json.*;
-import biz.nellemann.svci.dto.json.System;
-import biz.nellemann.svci.dto.toml.SvcConfiguration;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
+import static java.lang.Thread.sleep;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -31,7 +25,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.lang.Thread.sleep;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import biz.nellemann.svci.dto.json.EnclosureStat;
+import biz.nellemann.svci.dto.json.MDiskGroup;
+import biz.nellemann.svci.dto.json.NodeStat;
+import biz.nellemann.svci.dto.json.System;
+import biz.nellemann.svci.dto.json.VDisk;
+import biz.nellemann.svci.dto.toml.SvcConfiguration;
 
 class VolumeController implements Runnable {
 

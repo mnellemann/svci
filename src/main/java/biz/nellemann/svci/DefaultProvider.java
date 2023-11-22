@@ -4,6 +4,7 @@ import picocli.CommandLine;
 
 public class DefaultProvider implements CommandLine.IDefaultValueProvider {
 
+    @Override
     public String defaultValue(CommandLine.Model.ArgSpec argSpec) throws Exception {
         if(argSpec.isOption()) {
             switch (argSpec.paramLabel()) {
