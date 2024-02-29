@@ -76,7 +76,7 @@
       }
     ]
   },
-  "description": "https://git.data.coop/nellemann/svci/ - Metrics collected from IBM Spectrum Virtualize.",
+  "description": "https://github.com/mnellemann/svci/ - Metrics collected from IBM Spectrum Virtualize.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -97,7 +97,7 @@
       },
       "id": 16,
       "options": {
-        "content": "## Metrics collected from IBM Spectrum Virtualize\n    \nFor more information visit: [git.data.coop/nellemann/svci](https://git.data.coop/nellemann/svci)\n           ",
+        "content": "## Metrics collected from IBM Spectrum Virtualize\n    \nFor more information visit: [github.com/mnellemann/svci](https://github.com/mnellemann/svci)\n           ",
         "mode": "markdown"
       },
       "pluginVersion": "9.1.6",
