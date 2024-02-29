@@ -1,3 +1,5 @@
+import org.redline_rpm.header.Os
+
 plugins {
     id 'java'
     id 'groovy'
@@ -21,8 +23,8 @@ dependencies {
     annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
     implementation 'info.picocli:picocli:4.7.5'
     implementation 'com.influxdb:influxdb-client-java:6.10.0'
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    implementation 'org.slf4j:slf4j-api:2.0.11'
+    implementation 'org.slf4j:slf4j-simple:2.0.11'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0' // Also used by InfluxDB Client
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.3'
@@ -73,13 +75,20 @@ ospackage {
 
 }
 
-buildRpm {
-    dependsOn startShadowScripts
-    os = "LINUX"
-}
-
 buildDeb {
     dependsOn startShadowScripts
+    installUtils file('scripts/utils.sh')
+    preUninstall file('scripts/remove.sh')
+    postInstall file('scripts/install.sh')
+
+}
+
+buildRpm {
+    dependsOn startShadowScripts
+    installUtils file('scripts/utils.sh')
+    preUninstall file('scripts/remove.sh')
+    postTrans file('scripts/install.sh')
+    os Os.LINUX
 }
 
 jacoco {
