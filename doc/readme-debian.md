@@ -44,15 +44,10 @@ When logged in to Grafana (port 3000, admin/admin) create a datasource that poin
 
 ## Download and Install svci
 
-[Download](https://git.data.coop/nellemann/-/packages/generic/svci/) the latest version of SVCi packaged for deb.
+Download latest release from [https://github.com/mnellemann/svci/releases](https://github.com/mnellemann/svci/releases)
 
 ```shell
-wget https://git.data.coop/api/packages/nellemann/generic/svci/v0.0.3/svci_0.0.3-1_all.deb
 dpkg -i svci_0.0.3-1_all.deb
-cp /opt/svci/doc/svci.toml /etc/
-cp /opt/svci/doc/svci.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable svci
 ```
 
 Now modify */etc/svci.toml* and test setup by running ```/opt/svci/bin/svci -d``` manually and verify connection to SVC and InfluxDB. Afterwards start service with ```systemctl start svci``` .

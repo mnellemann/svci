@@ -9,11 +9,11 @@ Please note that the software versions referenced in this document might have ch
 
 ## Download and Install svci
 
-[Download](https://git.data.coop/nellemann/-/packages/generic/svci/) the latest version of SVCi packaged for rpm.
+Download latest release from [https://github.com/mnellemann/svci/releases](https://github.com/mnellemann/svci/releases)
+
 
 ```shell
 rpm -ivh --ignoreos svci-0.0.3-1_all.rpm
-cp /opt/svci/doc/svci.toml /etc/
 ```
 
 Now modify */etc/svci.toml* and test your setup by running ```/opt/svci/bin/svci -d```

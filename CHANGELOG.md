@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.1.4 - 2024-02-29
+- Improve packaging and manage init/service scripts
 
 ## 0.1.2 - 2023-08-08
 - Updated 3rd party dependencies
