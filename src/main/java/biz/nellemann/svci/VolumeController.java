@@ -17,24 +17,21 @@ package biz.nellemann.svci;
 
 import java.io.IOException;
 import static java.lang.Thread.sleep;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+
+import java.time.*;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import biz.nellemann.svci.dto.json.*;
+import biz.nellemann.svci.dto.json.System;
+import biz.nellemann.svci.dto.xml.DiskStatCollection;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import biz.nellemann.svci.dto.json.EnclosureStat;
-import biz.nellemann.svci.dto.json.MDiskGroup;
-import biz.nellemann.svci.dto.json.NodeStat;
-import biz.nellemann.svci.dto.json.System;
-import biz.nellemann.svci.dto.json.VDisk;
 import biz.nellemann.svci.dto.toml.SvcConfiguration;
 
 class VolumeController implements Runnable {
@@ -45,8 +42,9 @@ class VolumeController implements Runnable {
     private final RestClient restClient;
     private final InfluxClient influxClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper xmlMapper = new XmlMapper();
     private final AtomicBoolean keepRunning = new AtomicBoolean(true);
-
+    private final ArrayList<String> fileDownloadList = new ArrayList<>();
     protected System system;
 
 
@@ -102,6 +100,7 @@ class VolumeController implements Runnable {
         influxClient.write(getNodeStats(),"node_stats");
         influxClient.write(getEnclosureStats(),"enclosure_stats");
         influxClient.write(getMDiskGroups(), "m_disk_groups");
+        influxClient.write(getStats(), "io_stats");
     }
 
 
@@ -171,7 +170,6 @@ class VolumeController implements Runnable {
 
                 measurementList.add(new Measurement(tagsMap, fieldsMap));
 
-                //log.info("{}: {} -> {}", stat.nodeName, stat.statName, stat.statCurrent);
             });
 
         } catch (IOException e) {
@@ -208,7 +206,6 @@ class VolumeController implements Runnable {
 
                 measurementList.add(new Measurement(tagsMap, fieldsMap));
 
-                //log.info("{}: {} -> {}", stat.nodeName, stat.statName, stat.statCurrent);
             });
 
         } catch (IOException e) {
@@ -246,8 +243,6 @@ class VolumeController implements Runnable {
                 log.trace("getVDisk() - fields: " + fieldsMap);
 
                 measurementList.add(new Measurement(tagsMap, fieldsMap));
-
-                //log.info("{}: {} -> {}", stat.nodeName, stat.statName, stat.statCurrent);
             });
 
         } catch (IOException e) {
@@ -256,6 +251,7 @@ class VolumeController implements Runnable {
 
         return measurementList;
     }
+
 
     List<Measurement> getMDiskGroups() {
         List<Measurement> measurementList = new ArrayList<>();
@@ -298,6 +294,103 @@ class VolumeController implements Runnable {
         }
 
         return measurementList;
+    }
+
+
+
+    List<Measurement> getStats() {
+        List<Measurement> measurementList = new ArrayList<>();
+
+        List<Dump> dumps = getDumps();
+        for(Dump dump : dumps) {
+
+            // Keep track of downloaded files, so we don't process a file twice
+            if(fileDownloadList.contains(dump.filename)) {
+                continue;
+            }
+
+            fileDownloadList.add(dump.filename);
+            if(fileDownloadList.size() >  1000) {
+                fileDownloadList.subList(0, 1000).clear();
+            }
+
+            log.warn("getStats() - processing filename: {}", dump.filename);
+            String output = getFile(dump.filename);
+            if(output == null || output.isEmpty()) {
+                continue;
+            }
+
+            try {
+                DiskStatCollection diskStatCollection = xmlMapper.readerFor(DiskStatCollection.class).readValue(output);
+                log.info("getStats() - file content: {}", diskStatCollection.toString());
+
+                diskStatCollection.diskStatList.forEach((stat) -> {
+
+                    // Convert to measurement
+                    Instant timestamp = Utils.parseDateTime(diskStatCollection.timestampUtc);
+
+                    HashMap<String, String> tagsMap = new HashMap<>();
+                    HashMap<String, Object> fieldsMap = new HashMap<>();
+                    tagsMap.put("idx", stat.idx);
+                    tagsMap.put("node", diskStatCollection.id);
+                    tagsMap.put("cluster", diskStatCollection.cluster);
+                    fieldsMap.put("ro", stat.ro);
+                    fieldsMap.put("wo", stat.wo);
+                    log.trace("getStats() - fields: " + fieldsMap);
+                    measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+
+                });
+
+
+            } catch (JsonProcessingException e) {
+                log.warn("getStats() - error: {}", e.getMessage());
+            }
+
+        }
+
+        return measurementList;
+    }
+
+
+    private List<Dump> getDumps() {
+
+        List<Dump> list = new ArrayList<>();
+
+        try {
+            String response = restClient.postRequest("/rest/v1/lsdumps","{\"prefix\":\"/dumps/iostats\"}" );
+
+            // Do not try to parse empty response
+            if(system == null || response == null || response.length() <= 1) {
+                log.warn("getDumps() - no data.");
+                return null;
+            }
+            list = Arrays.asList(objectMapper.readValue(response, Dump[].class));
+        } catch (IOException e) {
+            log.error("getDumps() - error 2: {}", e.getMessage());
+        }
+
+        return list;
+    }
+
+
+    private String getFile(String filename) {
+
+        try {
+            String response = restClient.postRequest("/rest/v1/download","{\"prefix\":\"/dumps/iostats\",\"filename\":\" " + filename +"\"}" );
+
+            // Do not try to parse empty response
+            if(system == null || response == null || response.length() <= 1) {
+                log.warn("getDownload() - no data.");
+                return null;
+            }
+            log.info(response.toString());
+            return response.toString();
+
+        } catch (IOException e) {
+            log.error("getDumps() - error 2: {}", e.getMessage());
+        }
+
+        return null;
     }
 
 }

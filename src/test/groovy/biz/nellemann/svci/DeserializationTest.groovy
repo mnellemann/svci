@@ -3,19 +3,25 @@ package biz.nellemann.svci
 import biz.nellemann.svci.dto.json.EnclosureStat
 import biz.nellemann.svci.dto.json.System
 import biz.nellemann.svci.dto.json.NodeStat
+import biz.nellemann.svci.dto.xml.DiskStat
+import biz.nellemann.svci.dto.xml.DiskStatCollection
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import spock.lang.Specification
 
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.Instant
 
 class DeserializationTest extends Specification {
 
 
-    ObjectMapper mapper
+    ObjectMapper jsonMapper
+    ObjectMapper xmlMapper
 
     def setup() {
-        mapper = new ObjectMapper();
+        jsonMapper = new ObjectMapper();
+        xmlMapper = new XmlMapper();
     }
 
     def cleanup() {
@@ -26,7 +32,7 @@ class DeserializationTest extends Specification {
 
         when:
         Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.4/lssystem.json').toURI())
-        System system = mapper.readerFor(System.class).readValue(testConfigurationFile.toFile())
+        System system = jsonMapper.readerFor(System.class).readValue(testConfigurationFile.toFile())
 
         then:
         system.name == "V7000_A2U12"
@@ -42,7 +48,7 @@ class DeserializationTest extends Specification {
 
         when:
         Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.4/lsnodestats.json').toURI())
-        List<NodeStat> nodeStats = Arrays.asList(mapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
+        List<NodeStat> nodeStats = Arrays.asList(jsonMapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:
         nodeStats.size() == 92
@@ -56,7 +62,7 @@ class DeserializationTest extends Specification {
 
         when:
         Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.5/lsnodestats_8.5.2.2.json').toURI())
-        List<NodeStat> nodeStats = Arrays.asList(mapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
+        List<NodeStat> nodeStats = Arrays.asList(jsonMapper.readerFor(NodeStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:
         nodeStats.size() == 92
@@ -70,7 +76,7 @@ class DeserializationTest extends Specification {
 
         when:
         Path testConfigurationFile = Paths.get(getClass().getResource('/json/v8.4/lsenclosurestats.json').toURI())
-        List<EnclosureStat> enclosureStats = Arrays.asList(mapper.readerFor(EnclosureStat[].class).readValue(testConfigurationFile.toFile()))
+        List<EnclosureStat> enclosureStats = Arrays.asList(jsonMapper.readerFor(EnclosureStat[].class).readValue(testConfigurationFile.toFile()))
 
         then:
         enclosureStats.size() == 6
@@ -80,5 +86,19 @@ class DeserializationTest extends Specification {
         enclosureStats.get(0).statPeak == 333
         enclosureStats.get(0).statPeakTime == 221126132328
     }
+
+
+    void "iostats v8_6_1"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/iostats_8.6.1.xml').toURI())
+        DiskStatCollection diskStatCollection = xmlMapper.readerFor(DiskStatCollection.class).readValue(testConfigurationFile.toFile())
+
+        then:
+        Utils.parseDateTime(diskStatCollection.timestampUtc).toEpochMilli() ==1710848238000L
+        diskStatCollection.diskStatList.size() == 8
+        diskStatCollection.diskStatList.get(0).urq == 86705311130L
+    }
+
 
 }
