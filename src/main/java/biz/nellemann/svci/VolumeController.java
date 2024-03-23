@@ -297,11 +297,10 @@ class VolumeController implements Runnable {
     }
 
 
-
     List<Measurement> getStats() {
         List<Measurement> measurementList = new ArrayList<>();
 
-        List<Dump> dumps = getDumps();
+        List<Dump> dumps = listDumps();
         for(Dump dump : dumps) {
 
             // Keep track of downloaded files, so we don't process a file twice
@@ -310,7 +309,7 @@ class VolumeController implements Runnable {
             }
 
             fileDownloadList.add(dump.filename);
-            if(fileDownloadList.size() >  1000) {
+            if(fileDownloadList.size() > 1000) {
                 fileDownloadList.subList(0, 1000).clear();
             }
 
@@ -352,7 +351,7 @@ class VolumeController implements Runnable {
     }
 
 
-    private List<Dump> getDumps() {
+    private List<Dump> listDumps() {
 
         List<Dump> list = new ArrayList<>();
 
@@ -361,12 +360,12 @@ class VolumeController implements Runnable {
 
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
-                log.warn("getDumps() - no data.");
+                log.warn("listDumps() - no data.");
                 return null;
             }
             list = Arrays.asList(objectMapper.readValue(response, Dump[].class));
         } catch (IOException e) {
-            log.error("getDumps() - error 2: {}", e.getMessage());
+            log.error("listDumps() - error: {}", e.getMessage());
         }
 
         return list;
@@ -380,14 +379,14 @@ class VolumeController implements Runnable {
 
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
-                log.warn("getDownload() - no data.");
+                log.warn("getFile() - no data.");
                 return null;
             }
             log.info(response.toString());
             return response.toString();
 
         } catch (IOException e) {
-            log.error("getDumps() - error 2: {}", e.getMessage());
+            log.error("getFile() - error: {}", e.getMessage());
         }
 
         return null;
