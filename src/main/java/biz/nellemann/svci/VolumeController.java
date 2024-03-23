@@ -301,7 +301,7 @@ class VolumeController implements Runnable {
         List<Measurement> measurementList = new ArrayList<>();
 
         List<Dump> dumps = listDumps();
-        for(Dump dump : dumps) {
+        for(Dump dump : Objects.requireNonNull(dumps)) {
 
             // Keep track of downloaded files, so we don't process a file twice
             if(fileDownloadList.contains(dump.filename)) {
@@ -313,7 +313,7 @@ class VolumeController implements Runnable {
                 fileDownloadList.subList(0, 1000).clear();
             }
 
-            log.warn("getStats() - processing filename: {}", dump.filename);
+            log.debug("getStats() - processing filename: {}", dump.filename);
             String output = getFile(dump.filename);
             if(output == null || output.isEmpty()) {
                 continue;
@@ -333,13 +333,26 @@ class VolumeController implements Runnable {
                     tagsMap.put("idx", stat.idx);
                     tagsMap.put("node", diskStatCollection.id);
                     tagsMap.put("cluster", diskStatCollection.cluster);
+                    fieldsMap.put("pre", stat.pre);
+                    fieldsMap.put("pro", stat.pro);
+                    fieldsMap.put("pwe", stat.pwe);
+                    fieldsMap.put("pwo", stat.pwo);
+                    fieldsMap.put("rb", stat.rb);
+                    fieldsMap.put("re", stat.re);
                     fieldsMap.put("ro", stat.ro);
+                    fieldsMap.put("rq", stat.rq);
+                    fieldsMap.put("ure", stat.ure);
+                    fieldsMap.put("urq", stat.urq);
+                    fieldsMap.put("uwe", stat.uwe);
+                    fieldsMap.put("uwq", stat.uwq);
+                    fieldsMap.put("wb", stat.wb);
+                    fieldsMap.put("we", stat.we);
                     fieldsMap.put("wo", stat.wo);
-                    log.trace("getStats() - fields: " + fieldsMap);
+                    fieldsMap.put("wq", stat.wq);
+                    log.trace("getStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
                     measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
 
                 });
-
 
             } catch (JsonProcessingException e) {
                 log.warn("getStats() - error: {}", e.getMessage());
@@ -361,7 +374,7 @@ class VolumeController implements Runnable {
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
                 log.warn("listDumps() - no data.");
-                return null;
+                return list;
             }
             list = Arrays.asList(objectMapper.readValue(response, Dump[].class));
         } catch (IOException e) {
