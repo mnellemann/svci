@@ -373,9 +373,10 @@ class VolumeController implements Runnable {
 
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
-                log.warn("listDumps() - no data.");
+                log.debug("listDumps() - no data.");
                 return list;
             }
+            log.debug("listDumps() => {}", response);
             list = Arrays.asList(objectMapper.readValue(response, Dump[].class));
         } catch (IOException e) {
             log.error("listDumps() - error: {}", e.getMessage());
@@ -388,15 +389,17 @@ class VolumeController implements Runnable {
     private String getFile(String filename) {
 
         try {
-            String response = restClient.postRequest("/rest/v1/download","{\"prefix\":\"/dumps/iostats\",\"filename\":\" " + filename +"\"}" );
+            String payload = String.format("{\"prefix\":\"/dumps/iostats\",\"filename\":\"%s\"}", filename);
+            String response = restClient.postRequest("/rest/v1/download", payload);
 
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
-                log.warn("getFile() - no data.");
+                log.debug("getFile() - no data.");
                 return null;
             }
-            log.info(response.toString());
-            return response.toString();
+
+            log.info(response);
+            return response;
 
         } catch (IOException e) {
             log.error("getFile() - error: {}", e.getMessage());
