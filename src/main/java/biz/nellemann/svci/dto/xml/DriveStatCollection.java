@@ -47,11 +47,8 @@ public class DriveStatCollection {
     @JsonProperty("timestamp_utc")
     public String timestampUtc;
 
-
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("mdsk")
     public List<DriveStat> driveStats;
-
-
 
 }

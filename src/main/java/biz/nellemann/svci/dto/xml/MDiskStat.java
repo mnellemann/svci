@@ -6,20 +6,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MDiskStat {
 
+
     /**
-     *
+     * Indicates the name of the MDisk for which the statistics apply.
      */
     @JsonProperty("id")
     public String id;
 
 
     /**
-     *
+     * Indicates the identifier of the MDisk for which the statistics apply.
      */
     @JsonProperty("idx")
     public String idx;
-
-
 
 
     /**

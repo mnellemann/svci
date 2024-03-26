@@ -11,16 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class DriveStat {
 
 
-    /*
-        Example:
-
-        idx="0" id="" ro="293454155" wo="1355883" rb="150449489584" wb="84301344" re="86109200" we="70482" rq="86641421" wq="75326"
-        ure="86172697868" uwe="70534802" urq="86705311130" uwq="75381664"
-        pre="70" pwe="338" pro="77" pwo="343"
-
-    */
-
-
     /**
      * Indicates the name of the MDisk for which the statistics apply.
      */

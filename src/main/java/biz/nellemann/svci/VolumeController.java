@@ -300,6 +300,10 @@ class VolumeController implements Runnable {
     }
 
 
+    /**
+     * When statistics collection is enabled with *startstats -internal x* we list the files and download.
+     * https://www.ibm.com/docs/en/flashsystem-9x00/8.6.x?topic=monitoring-statistics-collection
+     */
     void processStats() {
 
         // Nd_stats: for drives
