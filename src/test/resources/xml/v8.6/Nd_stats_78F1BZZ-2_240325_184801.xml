@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+    xmlns="http://ibm.com/storage/management/performance/api/2010/03/driveStats"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2010/03/driveStats schema/SVCPerfStatsD.xsd"
+    scope="node" id="node2" cluster="FS5200-4" node_id="0x0000000000000002" cluster_id="0x00000204a04055f4"
+    sizeUnits="512B" timeUnits="msec" contains="driveStats" timestamp="2024-03-25 18:48:01" timezone="GMT+0:00"
+    timestamp_utc="2024-03-25 18:48:01">
+    <mdsk idx="0" id="" ro="366787363" wo="692827" rb="187816253952" wb="357395632" re="84731683" we="85870"
+          rq="85406041" wq="86876"
+          ure="84794164814" uwe="85933354" urq="85469020667" uwq="86940379"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="1" id="" ro="367011523" wo="693554" rb="187818245432" wb="357847790" re="84965030" we="87457"
+          rq="85607491" wq="88380"
+          ure="85027684590" uwe="87521838" urq="85670619170" uwq="88446074"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="2" id="" ro="366981782" wo="692948" rb="187817855960" wb="357494176" re="83710529" we="86003"
+          rq="84301283" wq="87059"
+          ure="83772258114" uwe="86067014" urq="84363448214" uwq="87123269"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="3" id="" ro="366926325" wo="693433" rb="187817453728" wb="357750912" re="85128234" we="84725"
+          rq="85720852" wq="85751"
+          ure="85191008713" uwe="84788000" urq="85784063286" uwq="85814667"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="4" id="" ro="366792107" wo="693389" rb="187816273144" wb="357724544" re="85028329" we="82778"
+          rq="85621640" wq="83709"
+          ure="85091030181" uwe="82839538" urq="85684778638" uwq="83771493"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="5" id="" ro="366820871" wo="693692" rb="187816531384" wb="357960736" re="85243191" we="79895"
+          rq="85847678" wq="80832"
+          ure="85306050763" uwe="79954556" urq="85910983196" uwq="80892456"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="6" id="" ro="366868773" wo="692638" rb="187816834320" wb="357284112" re="85450294" we="79569"
+          rq="86047790" wq="80502"
+          ure="85513306281" uwe="79628418" urq="86111242551" uwq="80561610"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+    <mdsk idx="7" id="" ro="366908593" wo="693381" rb="187817530208" wb="357718648" re="84843104" we="79231"
+          rq="85476608" wq="80161"
+          ure="84905668618" uwe="79289597" urq="85539639550" uwq="80220933"
+          pre="0" pwe="0" pro="0" pwo="0"/>
+</diskStatsColl>

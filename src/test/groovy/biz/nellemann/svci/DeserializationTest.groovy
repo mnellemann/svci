@@ -3,15 +3,17 @@ package biz.nellemann.svci
 import biz.nellemann.svci.dto.json.EnclosureStat
 import biz.nellemann.svci.dto.json.System
 import biz.nellemann.svci.dto.json.NodeStat
-import biz.nellemann.svci.dto.xml.DiskStat
-import biz.nellemann.svci.dto.xml.DiskStatCollection
+import biz.nellemann.svci.dto.xml.DriveStatCollection
+import biz.nellemann.svci.dto.xml.MDiskStatCollection
+import biz.nellemann.svci.dto.xml.NodeStatCollection
+import biz.nellemann.svci.dto.xml.VDiskStatCollection
+import biz.nellemann.svci.dto.xml.VolumeGroupStatCollection
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import spock.lang.Specification
 
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.Instant
 
 class DeserializationTest extends Specification {
 
@@ -88,16 +90,85 @@ class DeserializationTest extends Specification {
     }
 
 
-    void "iostats v8_6_1"() {
+    void "io-stats for drive (Nd_stats)"() {
 
         when:
-        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/iostats_8.6.1.xml').toURI())
-        DiskStatCollection diskStatCollection = xmlMapper.readerFor(DiskStatCollection.class).readValue(testConfigurationFile.toFile())
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/Nd_stats_78F1BZZ-2_240325_190303.xml').toURI())
+        DriveStatCollection diskStatCollection = xmlMapper.readerFor(DriveStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(diskStatCollection.timestampUtc).toEpochMilli() ==1710848238000L
-        diskStatCollection.diskStatList.size() == 8
-        diskStatCollection.diskStatList.get(0).urq == 86705311130L
+        Utils.parseDateTime(diskStatCollection.timestampUtc).toEpochMilli() ==1711393383000L
+        diskStatCollection.driveStats.size() == 8
+        diskStatCollection.driveStats.get(0).urq == 85469020667L
+    }
+
+
+
+    void "io-stats for volume-group (Ng_stats)"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/Ng_stats_78F1BZZ-2_240325_190303.xml').toURI())
+        VolumeGroupStatCollection volumeGroupStatCollection = xmlMapper.readerFor(VolumeGroupStatCollection.class).readValue(testConfigurationFile.toFile())
+
+        then:
+        Utils.parseDateTime(volumeGroupStatCollection.timestampUtc).toEpochMilli() ==1711393383000L
+        volumeGroupStatCollection.volumeGroupStats.size() == 2
+        volumeGroupStatCollection.volumeGroupStats.get(0).name == "SafeguardedCopy_VolumeGroup"
+    }
+
+
+    void "io-stats for mdisk (Nm_stats)"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/Nm_stats_78F1BZZ-2_240325_190303.xml').toURI())
+        MDiskStatCollection mDiskStatCollection = xmlMapper.readerFor(MDiskStatCollection.class).readValue(testConfigurationFile.toFile())
+
+        then:
+        Utils.parseDateTime(mDiskStatCollection.timestampUtc).toEpochMilli() ==1711393383000L
+        mDiskStatCollection.mDiskStats.size() == 1
+        mDiskStatCollection.mDiskStats.get(0).urq == 4148033741L
+    }
+
+
+    void "io-stats for node (Nn_stats)"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/Nn_stats_78F1BZZ-2_240325_190303.xml').toURI())
+        NodeStatCollection nodeStatCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(testConfigurationFile.toFile())
+
+        then:
+        Utils.parseDateTime(nodeStatCollection.timestampUtc).toEpochMilli() ==1711393383000L
+        nodeStatCollection.nodeStats.size() == 3
+        nodeStatCollection.nodeStats.get(0).lrb == 1016167148042L
+        nodeStatCollection.nodeStats.get(0).lwb == 93481412171L
+    }
+
+
+    void "io-stats for port (Nn_stats)"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/Nn_stats_78F1BZZ-2_240325_190303.xml').toURI())
+        NodeStatCollection nodeStatCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(testConfigurationFile.toFile())
+
+        then:
+        Utils.parseDateTime(nodeStatCollection.timestampUtc).toEpochMilli() ==1711393383000L
+        nodeStatCollection.portStats.size() == 9
+        nodeStatCollection.portStats.get(0).cbr == 0L
+        nodeStatCollection.portStats.get(0).cbt == 0L
+    }
+
+
+    void "io-stats for vdisk (Nv_stats)"() {
+
+        when:
+        Path testConfigurationFile = Paths.get(getClass().getResource('/xml/v8.6/Nv_stats_78F1BZZ-2_240325_190303.xml').toURI())
+        VDiskStatCollection vDiskStatCollection = xmlMapper.readerFor(VDiskStatCollection.class).readValue(testConfigurationFile.toFile())
+
+        then:
+        Utils.parseDateTime(vDiskStatCollection.timestampUtc).toEpochMilli() ==1711393383000L
+        vDiskStatCollection.vDiskStats.size() == 78
+        vDiskStatCollection.vDiskStats.get(0).id == "Compressed_Dedup_Volumes0"
+        vDiskStatCollection.vDiskStats.get(0).idx == "12"
     }
 
 

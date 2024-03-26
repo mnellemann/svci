@@ -8,7 +8,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = false)
-public class DiskStatCollection {
+public class VolumeGroupStatCollection {
 
     @JsonProperty("schemaLocation")
     @JacksonXmlProperty(isAttribute = true)
@@ -49,7 +49,9 @@ public class DiskStatCollection {
 
 
     @JacksonXmlElementWrapper(useWrapping = false)
-    @JsonProperty("mdsk")
-    public List<DiskStat> diskStatList;
+    @JsonProperty("volumegroup")
+    public List<VolumeGroupStat> volumeGroupStats;
+
+
 
 }
