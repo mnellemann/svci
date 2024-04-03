@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = false)
@@ -49,6 +50,6 @@ public class DriveStatCollection {
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("mdsk")
-    public List<DriveStat> driveStats;
+    public List<DriveStat> driveStats = new ArrayList<>();
 
 }

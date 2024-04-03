@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = false)
@@ -50,7 +51,7 @@ public class VolumeGroupStatCollection {
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("volumegroup")
-    public List<VolumeGroupStat> volumeGroupStats;
+    public List<VolumeGroupStat> volumeGroupStats = new ArrayList<>();
 
 
 

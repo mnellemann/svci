@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = false)
@@ -50,7 +51,7 @@ public class MDiskStatCollection {
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("mdsk")
-    public List<MDiskStat> mDiskStats;
+    public List<MDiskStat> mDiskStats = new ArrayList<>();
 
 
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -50,12 +51,12 @@ public class NodeStatCollection {
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("node")
-    public List<NodeStat> nodeStats;
+    public List<NodeStat> nodeStats = new ArrayList<>();
 
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JsonProperty("port")
-    public List<PortStat> portStats;
+    public List<PortStat> portStats = new ArrayList<>();
 
 
 }
