@@ -31,7 +31,7 @@ class ConfigurationTest extends Specification {
         println(conf.svc.entrySet().forEach((e) -> {
             println((String)e.key + " -> " + e);
             SvcConfiguration c = e.value;
-            println(c.url);
+            println(c.hostname);
         }));
 
         then:

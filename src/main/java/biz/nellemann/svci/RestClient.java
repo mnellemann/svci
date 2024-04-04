@@ -1,6 +1,7 @@
 package biz.nellemann.svci;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -39,15 +40,18 @@ public class RestClient {
     private final static int READ_TIMEOUT = 180;
 
     protected String authToken;
-    protected final String baseUrl;
+
+    protected final static int port = 7443;
+    protected final static String protocol = "https";
+    protected final String hostname;
     protected final String username;
     protected final String password;
 
     private final HashMap<String, Integer> urlErrorCounter = new HashMap<String, Integer>();
 
 
-    public RestClient(String baseUrl, String username, String password, Boolean trustAll) {
-        this.baseUrl = baseUrl;
+    public RestClient(String hostname, String username, String password, Boolean trustAll) {
+        this.hostname = hostname;
         this.username = username;
         this.password = password;
         if (trustAll) {
@@ -63,10 +67,10 @@ public class RestClient {
      */
     public synchronized void login() {
 
-        log.info("Connecting to SVC - {} @ {}", username, baseUrl);
-
         try {
-            URL url = new URL(String.format("%s/rest/v1/auth", baseUrl));
+            URL url = new URL(protocol, hostname, port, "/rest/v1/auth");
+            log.info("Connecting to SVC - {} @ {}", username, url);
+
             Request request = new Request.Builder()
                 .url(url)
                 .addHeader("X-Audit-Memento", "IBM Power HMC Insights")
@@ -102,13 +106,15 @@ public class RestClient {
 
 
     public String postRequest(String urlPath) throws IOException {
-        URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        //URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        URL absUrl = new URL(protocol, hostname, port, urlPath);
         return postRequest(absUrl, null);
     }
 
 
     public String postRequest(String urlPath, String payload) throws IOException {
-        URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        //URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        URL absUrl = new URL(protocol, hostname, port, urlPath);
         return postRequest(absUrl, payload);
     }
 

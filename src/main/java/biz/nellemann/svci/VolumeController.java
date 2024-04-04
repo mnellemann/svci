@@ -41,18 +41,20 @@ class VolumeController implements Runnable {
 
     private final Integer refreshValue;
     private final RestClient restClient;
+    private final ShellClient shellClient;
     private final InfluxClient influxClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper xmlMapper = new XmlMapper();
     private final AtomicBoolean keepRunning = new AtomicBoolean(true);
     private final ArrayList<String> fileDownloadList = new ArrayList<>();
     protected System system;
-
+    protected Boolean useShellForDownload = false;
 
     VolumeController(SvcConfiguration configuration, InfluxClient influxClient) {
         this.refreshValue = configuration.refresh;
         this.influxClient = influxClient;
-        restClient = new RestClient(configuration.url, configuration.username, configuration.password, configuration.trust);
+        restClient = new RestClient(configuration.hostname, configuration.username, configuration.password, configuration.trust);
+        shellClient = new ShellClient(configuration.hostname, configuration.username, configuration.password);
     }
 
 
@@ -375,7 +377,7 @@ class VolumeController implements Runnable {
             statCollection.driveStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime(statCollection.timestampUtc);
+                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -423,7 +425,7 @@ class VolumeController implements Runnable {
             statCollection.volumeGroupStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime(statCollection.timestampUtc);
+                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -465,7 +467,7 @@ class VolumeController implements Runnable {
             statCollection.mDiskStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime(statCollection.timestampUtc);
+                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -508,12 +510,12 @@ class VolumeController implements Runnable {
 
         try {
             NodeStatCollection statCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(stats);
-            //log.debug("getNodeStats() - file content: {}", statCollection.toString());
+            log.debug("getNodeStats() - file content: {}", statCollection.toString());
 
             statCollection.nodeStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime(statCollection.timestampUtc);
+                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -554,7 +556,7 @@ class VolumeController implements Runnable {
             statCollection.portStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime(statCollection.timestampUtc);
+                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -601,7 +603,7 @@ class VolumeController implements Runnable {
             statCollection.vDiskStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime(statCollection.timestampUtc);
+                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -650,16 +652,21 @@ class VolumeController implements Runnable {
     private String getFile(String filename) {
 
         try {
-            String payload = String.format("{\"prefix\":\"/dumps/iostats\",\"filename\":\"%s\"}", filename);
-            String response = restClient.postRequest("/rest/v1/download", payload);
+            String response;
+            if(useShellForDownload) {
+                response = shellClient.read(String.format("/dumps/iostats/%s", filename));
+            } else {
+                String payload = String.format("{\"prefix\":\"/dumps/iostats\",\"filename\":\"%s\"}", filename);
+                response = restClient.postRequest("/rest/v1/download", payload);
+            }
 
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
-                log.debug("getFile() - no data.");
+                log.debug("getFile() - no data, fallback to Shell Transfer.");
+                useShellForDownload = true;
                 return null;
             }
 
-            //log.debug(response);
             return response;
 
         } catch (IOException e) {

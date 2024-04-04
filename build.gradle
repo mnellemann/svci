@@ -25,7 +25,9 @@ dependencies {
     implementation 'com.influxdb:influxdb-client-java:6.10.0'
     implementation 'org.slf4j:slf4j-api:2.0.11'
     implementation 'org.slf4j:slf4j-simple:2.0.11'
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0' // Also used by InfluxDB Client
+    implementation 'org.apache.sshd:sshd-core:2.12.1'       // Java SSH Client
+    implementation 'org.apache.sshd:sshd-scp:2.12.1'        // Java SSH Client - SCP component
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'     // Also used by InfluxDB Client
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.3'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3'
@@ -33,6 +35,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
     testImplementation "org.mock-server:mockserver-netty-no-dependencies:5.15.0"
+
 }
 
 application {

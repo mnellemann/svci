@@ -9,7 +9,7 @@ database = "svci"
 
 # SVC on our primary site
 [svc.site1]
-url = "https://10.10.10.18:7443"
+hostname = "10.10.10.18"
 username = "superuser"
 password = "password"
 refresh = 29

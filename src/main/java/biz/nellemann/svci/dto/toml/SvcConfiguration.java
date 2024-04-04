@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SvcConfiguration {
 
-    public String url;
+    public String hostname;
     public String username;
     public String password;
     public Integer refresh = 30;

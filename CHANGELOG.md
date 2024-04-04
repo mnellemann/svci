@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.2.1 - 2024-04-XX
+- Support download of iostat dumps
+- Configuration file change: url -> hostname
+
 ## 0.1.4 - 2024-02-29
 - Improve packaging and manage init/service scripts
 
