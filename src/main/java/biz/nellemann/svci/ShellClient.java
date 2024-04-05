@@ -23,69 +23,90 @@ public class ShellClient {
     private final String hostname;
     private final String username;
     private final String password;
-    private final int port = 22;
+    private final Integer port;
     private final long defaultTimeoutSeconds = 15;
 
     private final SshClient client;
+    private ClientSession session;
 
 
-    public ShellClient(String hostname, String username, String password) {
+    public ShellClient(String hostname, String username, String password, Integer port) {
         this.hostname = hostname;
         this.username = username;
         this.password = password;
+        this.port = port;
         client = SshClient.setUpDefaultClient();
         client.start();
     }
 
 
-    public String execute(String command) throws UnsupportedOperationException, IOException {
+    private ClientSession getSession() {
+
+        if(session == null) {
+            log.info("getSession() - Creating SSH session");
+            try {
+                session = client.connect(username, hostname, port).verify(defaultTimeoutSeconds, TimeUnit.SECONDS).getSession();
+                session.addPasswordIdentity(password);
+                session.auth().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
+            } catch (IOException | UnsupportedOperationException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        return session;
+    }
+
+
+    public String execute(String command) {
 
         log.info("execute() - command: {}", command);
-        try (ClientSession session = client.connect(username, hostname, port).verify(defaultTimeoutSeconds, TimeUnit.SECONDS).getSession()) {
-            session.addPasswordIdentity(password);
-            session.auth().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
-            try (ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
-                 ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
-                 ClientChannel channel = session.createChannel(Channel.CHANNEL_EXEC, command)) // to execute remote commands
-            {
-                channel.setOut(responseStream);
-                channel.setErr(errorStream);
-                try {
-                    channel.open().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
-                    try (OutputStream pipedIn = channel.getInvertedIn()) {
-                        pipedIn.write(command.getBytes());
-                        pipedIn.flush();
-                    }
-                    channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED),
-                        TimeUnit.SECONDS.toMillis(defaultTimeoutSeconds));
-                    String error = errorStream.toString();
-                    if (!error.isEmpty()) {
-                        throw new UnsupportedOperationException(error);
-                    }
-                    return responseStream.toString();
+        try (ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
+             ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
+             ClientChannel channel = getSession().createChannel(Channel.CHANNEL_EXEC, command)) // to execute remote commands
+        {
+            channel.setOut(responseStream);
+            channel.setErr(errorStream);
+            try {
+                channel.open().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
+                try (OutputStream pipedIn = channel.getInvertedIn()) {
+                    pipedIn.write(command.getBytes());
+                    pipedIn.flush();
                 }
-                finally {
-                    channel.close(false);
+                channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED),
+                    TimeUnit.SECONDS.toMillis(defaultTimeoutSeconds));
+                String error = errorStream.toString();
+                if (!error.isEmpty()) {
+                    throw new UnsupportedOperationException(error);
                 }
-            }
-        }
-    }
-
-
-    public String read(String file) throws UnsupportedOperationException, IOException {
-
-        log.info("read() - file: {}", file);
-        try (ClientSession session = client.connect(username, hostname, port).verify(defaultTimeoutSeconds, TimeUnit.SECONDS).getSession()) {
-            session.addPasswordIdentity(password);
-            session.auth().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
-
-            ScpClientCreator creator = ScpClientCreator.instance();
-            ScpClient client = creator.createScpClient(session);
-            try (ByteArrayOutputStream responseStream = new ByteArrayOutputStream()) {
-                client.download(file, responseStream);
                 return responseStream.toString();
             }
+            finally {
+                channel.close(false);
+            }
+        } catch (UnsupportedOperationException | IOException e) {
+            session = null;
         }
+
+        return null;
     }
+
+
+
+    public String read(String file) {
+
+        log.info("read() - file: {}", file);
+
+        ScpClientCreator creator = ScpClientCreator.instance();
+        ScpClient client = creator.createScpClient(getSession());
+        try (ByteArrayOutputStream responseStream = new ByteArrayOutputStream()) {
+            client.download(file, responseStream);
+            return responseStream.toString();
+        } catch (UnsupportedOperationException | IOException  e) {
+            session = null;
+        }
+
+        return null;
+    }
+
 
 }

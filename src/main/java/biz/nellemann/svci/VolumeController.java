@@ -53,8 +53,8 @@ class VolumeController implements Runnable {
     VolumeController(SvcConfiguration configuration, InfluxClient influxClient) {
         this.refreshValue = configuration.refresh;
         this.influxClient = influxClient;
-        restClient = new RestClient(configuration.hostname, configuration.username, configuration.password, configuration.trust);
-        shellClient = new ShellClient(configuration.hostname, configuration.username, configuration.password);
+        restClient = new RestClient(configuration.hostname, configuration.username, configuration.password, 7443, configuration.trust);
+        shellClient = new ShellClient(configuration.hostname, configuration.username, configuration.password, 22);
     }
 
 

@@ -41,8 +41,8 @@ public class RestClient {
 
     protected String authToken;
 
-    protected final static int port = 7443;
     protected final static String protocol = "https";
+    protected final Integer port;
     protected final String hostname;
     protected final String username;
     protected final String password;
@@ -50,10 +50,11 @@ public class RestClient {
     private final HashMap<String, Integer> urlErrorCounter = new HashMap<String, Integer>();
 
 
-    public RestClient(String hostname, String username, String password, Boolean trustAll) {
+    public RestClient(String hostname, String username, String password, Integer port, Boolean trustAll) {
         this.hostname = hostname;
         this.username = username;
         this.password = password;
+        this.port = port;
         if (trustAll) {
             this.httpClient = getUnsafeOkHttpClient();
         } else {
