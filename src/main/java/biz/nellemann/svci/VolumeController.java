@@ -377,7 +377,8 @@ class VolumeController implements Runnable {
             statCollection.driveStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -425,7 +426,8 @@ class VolumeController implements Runnable {
             statCollection.volumeGroupStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtctimestampUtc : statCollection.timestamp );
+                Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -467,7 +469,8 @@ class VolumeController implements Runnable {
             statCollection.mDiskStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -515,7 +518,8 @@ class VolumeController implements Runnable {
             statCollection.nodeStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
@@ -556,12 +560,14 @@ class VolumeController implements Runnable {
             statCollection.portStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
                 tagsMap.put("id", stat.id);
                 tagsMap.put("type", stat.type);
+                tagsMap.put("node", statCollection.id);
                 tagsMap.put("cluster", statCollection.cluster);
                 fieldsMap.put("hbt", stat.hbt);
                 fieldsMap.put("hbr", stat.hbr);
@@ -603,12 +609,14 @@ class VolumeController implements Runnable {
             statCollection.vDiskStats.forEach((stat) -> {
 
                 // Convert to measurement
-                Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
+                Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
                 HashMap<String, String> tagsMap = new HashMap<>();
                 HashMap<String, Object> fieldsMap = new HashMap<>();
                 tagsMap.put("id", stat.id);
                 tagsMap.put("idx", stat.idx);
+                tagsMap.put("node", statCollection.id);
                 fieldsMap.put("ro", stat.ro);
                 fieldsMap.put("wo", stat.wo);
                 fieldsMap.put("rb", stat.rb);

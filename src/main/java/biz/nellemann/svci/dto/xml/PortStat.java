@@ -15,7 +15,7 @@ public class PortStat {
 
 
     /**
-     *
+     * Type of port: FC, NVMe, PCIe, IPREP, iSCSI, 
      */
     @JsonProperty("type")
     public String type;

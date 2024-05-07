@@ -17,7 +17,9 @@ public class Utils {
         String pattern = "yyyy-MM-dd HH:mm:ss";
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH);
         LocalDateTime localDateTime = LocalDateTime.parse(stringDate, dateTimeFormatter);
-        ZoneId zoneId = ZoneId.of("UTC");
+
+        //ZoneId zoneId = ZoneId.of("UTC");
+        ZoneId zoneId = ZoneId.systemDefault();
         ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
         return zonedDateTime.toInstant();
     }
