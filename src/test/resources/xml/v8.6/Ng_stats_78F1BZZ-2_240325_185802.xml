@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+    xmlns="http://ibm.com/storage/management/performance/api/2021/04/volumegroupstats"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2021/04/volumegroupstats schema/SVCPerfStatsG.xsd"
+    scope="node" id="node2" cluster="FS5200-4" node_id="0x0000000000000002" cluster_id="0x00000204a04055f4"
+    sizeUnits="512B" timeUnits="msec" contains="volumegroupStats" timestamp="2024-03-25 18:58:02" timezone="GMT+0:00"
+    timestamp_utc="2024-03-25 18:58:02">
+    <volumegroup idx="0"
+                 name="SafeguardedCopy_VolumeGroup"
+    >
+    </volumegroup>
+    <volumegroup idx="1"
+                 rarp="0" rwrp="0" rnrw="0" rnrb="0" rhalwl="0" rhalwc="0" rhalww="0" rharwl="0" rharwc="0"
+                 name="HA_Volume Group"
+    >
+    </volumegroup>
+</diskStatsColl>

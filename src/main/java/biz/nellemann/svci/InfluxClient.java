@@ -119,6 +119,7 @@ public final class InfluxClient {
         }
     }
 
+
     private List<Point> processMeasurementMap(List<Measurement> measurements, String name) {
         List<Point> listOfPoints = new ArrayList<>();
         measurements.forEach( (m) -> {

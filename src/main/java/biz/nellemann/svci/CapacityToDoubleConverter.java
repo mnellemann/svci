@@ -27,7 +27,6 @@ public class CapacityToDoubleConverter extends StdConverter<String, Double> {
 
         double input = Double.parseDouble(m.group(1));
         String unit = m.group(2);
-        log.debug("Input: {} {}", input, unit);
 
         double output = input;
         switch (unit.toUpperCase()) {
@@ -48,7 +47,7 @@ public class CapacityToDoubleConverter extends StdConverter<String, Double> {
                 break;
         }
 
-        log.debug("Output: {} TB", output);
+        log.trace("convert: {} to {} TB", input, output);
         return output;
     }
 

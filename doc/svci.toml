@@ -33,7 +33,7 @@ bucket = "svci"
 ###
 
 [svc.site1]
-url = "https://10.10.10.5:7443"
+hostname = "10.10.10.5"
 username = "superuser"
 password = "password"
 refresh = 30   # How often to query SVC for data - in seconds

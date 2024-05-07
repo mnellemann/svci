@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<diskStatsColl
+    xmlns="http://ibm.com/storage/management/performance/api/2003/04/diskStats"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://ibm.com/storage/management/performance/api/2003/04/diskStats schema/SVCPerfStats.xsd"
+    scope="node" id="node2" cluster="FS5200-4" node_id="0x0000000000000002" cluster_id="0x00000204a04055f4"
+    sizeUnits="512B" timeUnits="msec" contains="managedDiskStats" timestamp="2024-03-25 19:03:03" timezone="GMT+0:00"
+    timestamp_utc="2024-03-25 19:03:03">
+    <mdsk idx="0"
+          id="MDisk1" ro="53558260" wo="127900" rb="536655083" wb="2019286550" re="4144977" we="147467" rq="4144977"
+          wq="147467"
+          ure="4148033741" uwe="147576696" urq="4148033741" uwq="147576696"
+          pre="0" pwe="0" pro="0" pwo="0">
+        <ca dav="0" dtav="0" dfav="0"/>
+    </mdsk>
+</diskStatsColl>

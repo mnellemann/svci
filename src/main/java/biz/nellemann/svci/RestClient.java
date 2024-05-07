@@ -1,11 +1,13 @@
 package biz.nellemann.svci;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -38,15 +40,21 @@ public class RestClient {
     private final static int READ_TIMEOUT = 180;
 
     protected String authToken;
-    protected final String baseUrl;
+
+    protected final static String protocol = "https";
+    protected final Integer port;
+    protected final String hostname;
     protected final String username;
     protected final String password;
 
+    private final HashMap<String, Integer> urlErrorCounter = new HashMap<String, Integer>();
 
-    public RestClient(String baseUrl, String username, String password, Boolean trustAll) {
-        this.baseUrl = baseUrl;
+
+    public RestClient(String hostname, String username, String password, Integer port, Boolean trustAll) {
+        this.hostname = hostname;
         this.username = username;
         this.password = password;
+        this.port = port;
         if (trustAll) {
             this.httpClient = getUnsafeOkHttpClient();
         } else {
@@ -60,10 +68,10 @@ public class RestClient {
      */
     public synchronized void login() {
 
-        log.info("Connecting to SVC - {} @ {}", username, baseUrl);
-
         try {
-            URL url = new URL(String.format("%s/rest/v1/auth", baseUrl));
+            URL url = new URL(protocol, hostname, port, "/rest/v1/auth");
+            log.info("Connecting to SVC - {} @ {}", username, url);
+
             Request request = new Request.Builder()
                 .url(url)
                 .addHeader("X-Audit-Memento", "IBM Power HMC Insights")
@@ -89,6 +97,7 @@ public class RestClient {
 
             authToken = authResponse.token;
             log.debug("logon() - auth token: {}", authToken);
+            urlErrorCounter.clear();
 
         } catch (IOException e) {
             log.warn("logon() - error: {}", e.getMessage());
@@ -98,13 +107,15 @@ public class RestClient {
 
 
     public String postRequest(String urlPath) throws IOException {
-        URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        //URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        URL absUrl = new URL(protocol, hostname, port, urlPath);
         return postRequest(absUrl, null);
     }
 
 
     public String postRequest(String urlPath, String payload) throws IOException {
-        URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        //URL absUrl = new URL(String.format("%s%s", baseUrl, urlPath));
+        URL absUrl = new URL(protocol, hostname, port, urlPath);
         return postRequest(absUrl, payload);
     }
 
@@ -119,6 +130,11 @@ public class RestClient {
     public synchronized String postRequest(URL url, String payload) throws IOException {
 
         log.trace("postRequest() - URL: {}", url.toString());
+        if(hasErrorForUrl(url.toString())) {
+            log.debug("postRequest() - breaking due to error counter for url: {}", url);
+            return null;
+        }
+
         RequestBody requestBody;
         if(payload != null) {
             requestBody = RequestBody.create(payload, MediaType.get("application/json"));
@@ -139,13 +155,14 @@ public class RestClient {
 
             if (!response.isSuccessful()) {
                 if(response.code() == 401) {
-                    log.warn("postRequest() - 401 - login and retry.");
-
-                    // Let's login again and retry
+                    log.warn("postRequest() - 401: login and retry.");
                     login();
                     return retryPostRequest(url, payload);
                 }
-                log.warn(responseBody);
+
+                log.warn("{}: {} <= \"{}\" => {}", response.code(), url, payload, responseBody);
+                logErrorForUrl(url.toString());
+
                 log.error("postRequest() - Unexpected response: {}", response.code());
                 throw new IOException("postRequest() - Unexpected response: " + response.code());
             }
@@ -238,6 +255,25 @@ public class RestClient {
         builder.writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS);
         builder.readTimeout(READ_TIMEOUT, TimeUnit.SECONDS);
         return builder.build();
+    }
+
+
+    private boolean hasErrorForUrl(String url) {
+        if(urlErrorCounter.containsKey(url)) {
+            int errors = urlErrorCounter.get(url);
+            return errors > 2;
+        }
+        return false;
+    }
+
+
+    private void logErrorForUrl(String url) {
+        if(urlErrorCounter.containsKey(url)) {
+            int errors = urlErrorCounter.get(url);
+            urlErrorCounter.put(url, ++errors);
+        } else {
+            urlErrorCounter.put(url, 1);
+        }
     }
 
 
