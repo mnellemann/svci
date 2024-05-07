@@ -1,6 +1,6 @@
-# Spectrum Virtualize Insights / SVCi
+# IBM Storage Metrics / SVCi
 
-**SVCi** is a utility that collects metrics from one or more *IBM SAN Volume Controllers*. The metric data is processed and saved into an InfluxDB time-series database. Grafana is used to visualize the metrics data from InfluxDB through provided dashboards, or your own customized dashboards.
+**SVCi** is a utility that collects metrics from one or more *IBM Storage Flashsystems*, *IBM Storage Virtualize*, or *IBM SAN Volume Controllers*. The metric data is processed and saved into an InfluxDB time-series database. Grafana is used to visualize the metrics data from InfluxDB through provided dashboards, or your own customized dashboards.
 
 This software is free to use and is licensed under the [Apache 2.0 License](LICENSE), but is not supported or endorsed by International Business Machines (IBM).
 
@@ -24,12 +24,12 @@ More screenshots can be found in the [doc/screenshots/](doc/screenshots) folder.
 
 There are few steps in the installation.
 
-1. Prepare your Spectrum Virtualize
+1. Prepare your Storage Virtualize
 2. Installation of InfluxDB and Grafana software
 3. Installation and configuration of *SVC Insights* (SVCi)
 4. Configure Grafana and import example dashboards
 
-### 1 - Prepare Spectrum Virtualize
+### 1 - Prepare Storage Virtualize
 
 - Create a user with the "Monitor" role
   - To start extended statistics, the user must be in the "Administrator" role (svctask startstats -interval 30)
