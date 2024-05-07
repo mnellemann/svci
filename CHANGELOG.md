@@ -2,8 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-## 0.2.1 - 2024-04-XX
-- Support download of iostat dumps
+## 0.2.1 - 2024-05-07
+- Support download of iostat dumps through HTTP or fallback to SCP
 - Configuration file change: url -> hostname
 
 ## 0.1.4 - 2024-02-29
