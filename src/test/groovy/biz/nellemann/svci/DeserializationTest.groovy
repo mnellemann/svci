@@ -14,6 +14,7 @@ import spock.lang.Specification
 
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.ZoneId
 
 class DeserializationTest extends Specification {
 
@@ -97,7 +98,7 @@ class DeserializationTest extends Specification {
         DriveStatCollection diskStatCollection = xmlMapper.readerFor(DriveStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(diskStatCollection.timestamp).toEpochMilli() == 1711389783000L
+        Utils.parseDateTime(diskStatCollection.timestamp, ZoneId.of("UTC")).toEpochMilli() == 1711393383000L
         diskStatCollection.driveStats.size() == 8
         diskStatCollection.driveStats.get(0).urq == 85469020667L
     }
@@ -111,7 +112,7 @@ class DeserializationTest extends Specification {
         VolumeGroupStatCollection volumeGroupStatCollection = xmlMapper.readerFor(VolumeGroupStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(volumeGroupStatCollection.timestamp).toEpochMilli() == 1711389783000L
+        Utils.parseDateTime(volumeGroupStatCollection.timestamp, ZoneId.of("UTC")).toEpochMilli() == 1711393383000L
         volumeGroupStatCollection.volumeGroupStats.size() == 2
         volumeGroupStatCollection.volumeGroupStats.get(0).name == "SafeguardedCopy_VolumeGroup"
     }
@@ -124,7 +125,7 @@ class DeserializationTest extends Specification {
         MDiskStatCollection mDiskStatCollection = xmlMapper.readerFor(MDiskStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(mDiskStatCollection.timestamp).toEpochMilli() == 1711389783000L
+        Utils.parseDateTime(mDiskStatCollection.timestamp, ZoneId.of("UTC")).toEpochMilli() == 1711393383000L
         mDiskStatCollection.mDiskStats.size() == 1
         mDiskStatCollection.mDiskStats.get(0).urq == 4148033741L
     }
@@ -137,7 +138,7 @@ class DeserializationTest extends Specification {
         NodeStatCollection nodeStatCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(nodeStatCollection.timestamp).toEpochMilli() == 1711389783000L
+        Utils.parseDateTime(nodeStatCollection.timestamp, ZoneId.of("UTC")).toEpochMilli() == 1711393383000L
         nodeStatCollection.nodeStats.size() == 3
         nodeStatCollection.nodeStats.get(0).lrb == 1016167148042L
         nodeStatCollection.nodeStats.get(0).lwb == 93481412171L
@@ -151,7 +152,7 @@ class DeserializationTest extends Specification {
         NodeStatCollection nodeStatCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(nodeStatCollection.timestamp).toEpochMilli() == 1711389783000L
+        Utils.parseDateTime(nodeStatCollection.timestamp, ZoneId.of("UTC")).toEpochMilli() == 1711393383000L
         nodeStatCollection.portStats.size() == 9
         nodeStatCollection.portStats.get(0).cbr == 0L
         nodeStatCollection.portStats.get(0).cbt == 0L
@@ -165,7 +166,7 @@ class DeserializationTest extends Specification {
         VDiskStatCollection vDiskStatCollection = xmlMapper.readerFor(VDiskStatCollection.class).readValue(testConfigurationFile.toFile())
 
         then:
-        Utils.parseDateTime(vDiskStatCollection.timestamp).toEpochMilli() == 1711389783000L
+        Utils.parseDateTime(vDiskStatCollection.timestamp, ZoneId.of("UTC")).toEpochMilli() == 1711393383000L
         vDiskStatCollection.vDiskStats.size() == 78
         vDiskStatCollection.vDiskStats.get(0).id == "Compressed_Dedup_Volumes0"
         vDiskStatCollection.vDiskStats.get(0).idx == "12"
