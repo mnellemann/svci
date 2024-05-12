@@ -49,12 +49,16 @@ jobs:
       run: ls build/libs/
       
     - name: Copy Jar file
-      run: mv build/libs/svci-0.2.1-all.jar svci-latest.jar
+      run: mv build/libs/svci*-all.jar svci-latest.jar
 
     - uses: actions/upload-artifact@master
       with:
         name: jar-file
         path: svci-latest.jar
+
+    - name: List built Jar file
+      run: ls
+      
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
