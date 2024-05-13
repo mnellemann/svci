@@ -1,5 +1,5 @@
 # Using eclipse-temurin with JRE to support several architectures.
-FROM arm64v8/eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre
 #Create working folder
 RUN mkdir /opt/app
 # Copy the compiled jar file into the container
