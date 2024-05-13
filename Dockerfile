@@ -1,5 +1,5 @@
-# Using ubi9/openjdk to support serveral architectures.
-FROM registry.access.redhat.com/ubi9/openjdk-21:latest
+# Using eclipse-temurin with JRE to support several architectures.
+FROM arm64v8/eclipse-temurin:21-jre
 #Create working folder
 RUN mkdir /opt/app
 # Copy the compiled jar file into the container
