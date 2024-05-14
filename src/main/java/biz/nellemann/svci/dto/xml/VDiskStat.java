@@ -3,41 +3,80 @@ package biz.nellemann.svci.dto.xml;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * See {@link https://www.ibm.com/docs/en/sanvolumecontroller/8.6.x?topic=troubleshooting-starting-statistics-collection}
+ */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VDiskStat {
 
-
     /**
-     *
+     * Name of vDisk
      */
     @JsonProperty("id")
     public String id;
 
-
     /**
-     *
+     * Number (ID) of vDisk
      */
     @JsonProperty("idx")
     public String idx;
 
-
-
+    /**
+     * Read operations
+     */
     @JsonProperty("ro")
     public Long ro;
 
-
+    /**
+     * Write operations
+     */
     @JsonProperty("wo")
     public Long wo;
 
+    /**
+     * Read blocks (512 bytes)
+     */
     @JsonProperty("rb")
     public Long rb;
 
+    /**
+     * Write blocks (512 bytes)
+     */
     @JsonProperty("wb")
     public Long wb;
 
+    /**
+     * Cumulative Read response time in milliseconds
+     */
+    @JsonProperty("rl")
+    public Long rl;
+
+    /**
+     * Cumulative write response time in milliseconds
+     */
+    @JsonProperty("wl")
+    public Long wl;
+
+    /**
+     * Worst Read response time in microseconds since last statistics collection
+     */
+    @JsonProperty("rlw")
+    public Long rlw;
+
+    /**
+     * Worst Write response time in microseconds since last statistics collection
+     */
+    @JsonProperty("wlw")
+    public Long wlw;
+
+    /**
+     * Cumulative transfer response time in microseconds
+     */
+    @JsonProperty("xl")
+    public Long xl;
 
     /*
-
     <vdsk idx="31"
           ctps="0" ctrhs="0" ctrhps="0" ctds="0"
           ctwfts="0" ctwwts="0" ctwfws="0" ctwhs="0"

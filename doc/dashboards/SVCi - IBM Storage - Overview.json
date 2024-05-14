@@ -27,7 +27,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.1.6"
+      "version": "9.2.10"
     },
     {
       "type": "datasource",
@@ -76,7 +76,7 @@
       }
     ]
   },
-  "description": "https://github.com/mnellemann/svci/ - Metrics collected from IBM Spectrum Virtualize.",
+  "description": "https://git.data.coop/nellemann/svci/ - Metrics collected from IBM Spectrum Virtualize.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -97,10 +97,15 @@
       },
       "id": 16,
       "options": {
-        "content": "## Metrics collected from IBM Spectrum Virtualize\n    \nFor more information visit: [github.com/mnellemann/svci](https://github.com/mnellemann/svci)\n           ",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "## Metrics collected from IBM Storage\n    \nFor more information visit: [github.com/mnellemann/svci](https://github.com/mnellemann/svci)\n           ",
         "mode": "markdown"
       },
-      "pluginVersion": "9.1.6",
+      "pluginVersion": "9.2.10",
       "targets": [
         {
           "datasource": {
@@ -187,7 +192,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "9.1.6",
+      "pluginVersion": "9.2.10",
       "targets": [
         {
           "alias": "$col",
@@ -1762,7 +1767,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "9.1.6",
+      "pluginVersion": "9.2.10",
       "targets": [
         {
           "alias": "$tag_system - $tag_id",
@@ -4007,7 +4012,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.1.6",
+      "pluginVersion": "9.2.10",
       "repeat": "system",
       "repeatDirection": "h",
       "targets": [
@@ -4148,8 +4153,8 @@
     ]
   },
   "timezone": "",
-  "title": "SVCi - IBM Spectrum Virtualize",
+  "title": "SVCi - IBM Storage - Overview",
   "uid": "7R8LbzKV3",
-  "version": 4,
+  "version": 10,
   "weekStart": ""
 }
