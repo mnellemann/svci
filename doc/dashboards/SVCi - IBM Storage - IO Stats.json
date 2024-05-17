@@ -318,7 +318,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -338,7 +338,7 @@
               }
             ]
           },
-          "unit": "binBps"
+          "unit": "KBs"
         },
         "overrides": []
       },
@@ -389,6 +389,12 @@
             },
             {
               "params": [
+                "cluster"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "null"
               ],
               "type": "fill"
@@ -418,7 +424,7 @@
               },
               {
                 "params": [
-                  " / 512"
+                  " *2"
                 ],
                 "type": "math"
               },
@@ -435,6 +441,12 @@
               "key": "node",
               "operator": "=~",
               "value": "/^$node$/"
+            },
+            {
+              "condition": "AND",
+              "key": "cluster",
+              "operator": "=~",
+              "value": "/^$system$/"
             }
           ]
         }
@@ -477,7 +489,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -497,7 +509,7 @@
               }
             ]
           },
-          "unit": "binBps"
+          "unit": "KBs"
         },
         "overrides": []
       },
@@ -548,6 +560,12 @@
             },
             {
               "params": [
+                "cluster"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "null"
               ],
               "type": "fill"
@@ -577,6 +595,12 @@
               },
               {
                 "params": [
+                  " *2"
+                ],
+                "type": "math"
+              },
+              {
+                "params": [
                   "tx"
                 ],
                 "type": "alias"
@@ -588,6 +612,12 @@
               "key": "node",
               "operator": "=~",
               "value": "/^$node$/"
+            },
+            {
+              "condition": "AND",
+              "key": "cluster",
+              "operator": "=~",
+              "value": "/^$system$/"
             }
           ]
         }
@@ -707,6 +737,12 @@
             },
             {
               "params": [
+                "cluster"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "none"
               ],
               "type": "fill"
@@ -747,6 +783,12 @@
               "key": "node",
               "operator": "=~",
               "value": "/^$node$/"
+            },
+            {
+              "condition": "AND",
+              "key": "cluster",
+              "operator": "=~",
+              "value": "/^$system$/"
             }
           ]
         }
@@ -866,6 +908,12 @@
             },
             {
               "params": [
+                "cluster"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "none"
               ],
               "type": "fill"
@@ -906,6 +954,12 @@
               "key": "node",
               "operator": "=~",
               "value": "/^$node$/"
+            },
+            {
+              "condition": "AND",
+              "key": "cluster",
+              "operator": "=~",
+              "value": "/^$system$/"
             }
           ]
         }
@@ -948,7 +1002,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -968,7 +1022,7 @@
               }
             ]
           },
-          "unit": "binBps"
+          "unit": "KBs"
         },
         "overrides": []
       },
@@ -1019,6 +1073,12 @@
             },
             {
               "params": [
+                "cluster"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "null"
               ],
               "type": "fill"
@@ -1048,7 +1108,7 @@
               },
               {
                 "params": [
-                  " / 512"
+                  "*2"
                 ],
                 "type": "math"
               },
@@ -1076,7 +1136,7 @@
               },
               {
                 "params": [
-                  " / 512"
+                  " *2"
                 ],
                 "type": "math"
               },
@@ -1093,6 +1153,12 @@
               "key": "node",
               "operator": "=~",
               "value": "/^$node$/"
+            },
+            {
+              "condition": "AND",
+              "key": "cluster",
+              "operator": "=~",
+              "value": "/^$system$/"
             }
           ]
         }
@@ -1207,6 +1273,12 @@
             },
             {
               "params": [
+                "cluster"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
                 "null"
               ],
               "type": "fill"
@@ -1247,6 +1319,12 @@
               "key": "node",
               "operator": "=~",
               "value": "/^$node$/"
+            },
+            {
+              "condition": "AND",
+              "key": "cluster",
+              "operator": "=~",
+              "value": "/^$system$/"
             }
           ]
         }
@@ -1324,6 +1402,6 @@
   "timezone": "",
   "title": "SVCi - IBM Storage - IO Stats",
   "uid": "xnCHdCYIz",
-  "version": 10,
+  "version": 11,
   "weekStart": ""
 }
