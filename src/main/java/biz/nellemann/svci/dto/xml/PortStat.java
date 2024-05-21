@@ -3,6 +3,10 @@ package biz.nellemann.svci.dto.xml;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * See {@link https://www.ibm.com/docs/en/sanvolumecontroller/8.6.x?topic=troubleshooting-starting-statistics-collection}
+ */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PortStat {
 
@@ -15,7 +19,7 @@ public class PortStat {
 
 
     /**
-     * Type of port: FC, NVMe, PCIe, IPREP, iSCSI, 
+     * Type of port: FC, NVMe, PCIe, IPREP, iSCSI,
      */
     @JsonProperty("type")
     public String type;

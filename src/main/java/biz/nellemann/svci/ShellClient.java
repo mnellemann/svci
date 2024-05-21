@@ -94,7 +94,7 @@ public class ShellClient {
 
     public String read(String file) {
 
-        log.info("read() - file: {}", file);
+        log.debug("read() - file: {}", file);
 
         ScpClientCreator creator = ScpClientCreator.instance();
         ScpClient client = creator.createScpClient(getSession());

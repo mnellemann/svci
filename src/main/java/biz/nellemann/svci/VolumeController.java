@@ -493,6 +493,7 @@ class VolumeController implements Runnable {
                 fieldsMap.put("wb", stat.wb);
                 fieldsMap.put("we", stat.we);
                 fieldsMap.put("wo", stat.wo);
+                fieldsMap.put("wq", stat.wq);
                 log.trace("getMDiskStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
                 measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
 
@@ -617,6 +618,7 @@ class VolumeController implements Runnable {
                 tagsMap.put("id", stat.id);
                 tagsMap.put("idx", stat.idx);
                 tagsMap.put("node", statCollection.id);
+                tagsMap.put("cluster", statCollection.cluster);
                 fieldsMap.put("ro", stat.ro);
                 fieldsMap.put("wo", stat.wo);
                 fieldsMap.put("rb", stat.rb);
