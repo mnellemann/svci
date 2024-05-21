@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="biz.nellemann.hmci" level="INFO"/>
+    <logger name="biz.nellemann.svci" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT" />
