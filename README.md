@@ -25,28 +25,46 @@ More screenshots can be found in the [doc/screenshots/](doc/screenshots) folder.
 There are few steps in the installation.
 
 1. Prepare your Storage Virtualize
-2. Installation of InfluxDB and Grafana software
-3. Installation and configuration of *SVC Insights* (SVCi)
-4. Configure Grafana and import example dashboards
+2. Chose if you want to run it Containerized or not. 
+3. Installation of InfluxDB and Grafana software
+4. Installation and configuration of *SVC Insights* (SVCi)
+5. Configure Grafana and import example dashboards
 
 ### 1 - Prepare Storage Virtualize
 
 - Create a user with the "Monitor" role
-  - To start extended statistics, the user must be in the "Administrator" role (svctask startstats -interval 30)
+  - :bulb: Normally the extended statistics is started, but to start or change the intervall 
+    the user must be in the "Administrator" role (svctask startstats -interval 5) 5min
+
+- Firewall access from SVCi.
+  - The SVCi needs access to the SVC on https/443, if the Virtualize code is below 8.6.+ then it will failback to SCP. same if the SVCi can't reach the system on https
 
 ### 2 - InfluxDB and Grafana Installation
+  - Check out the Doc folder for different installation methods.
+    - **Containerized**
+      - [readme-podman.md](doc/readme-podman.md)
+      - [readme-k8/oc.md](doc/readme-k8/oc.md)
+    - **OS based**
+      - [readme-aix.md](doc/readme-aix.md)
+      - [readme-redhat.md](doc/readme-redhat.md)
+      - [readme-suse.md](doc/readme-suse.md)
+      - [readme-suse.md](doc/readme-suse.md)
+
+
+### 3 - InfluxDB and Grafana Installation - Non-Containerized
 
 Install InfluxDB (v. **1.8** or later) on a host which is network accessible by the SVCi utility (the default InfluxDB port is 8086). You can install Grafana on the same server or any server which are able to connect to the InfluxDB database. The Grafana installation needs to be accessible from your browser (default on port 3000). The default settings for both InfluxDB and Grafana will work fine as a start.
 
 - Create the empty *svci* database by running the **influx** CLI command and type:
 
-```text
+```shell
 CREATE DATABASE "svci" WITH DURATION 365d REPLICATION 1;
 ```
 
 See the [Influx documentation](https://docs.influxdata.com/influxdb/v1.8/query_language/manage-database/#create-database) for more information on duration and replication.
 
-### 3 - SVCi Installation & Configuration
+
+### 4 - SVCi Installation & Configuration
 
 Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on port 7443), and is also allowed to connect to the InfluxDB service. This *can be* the same LPAR/VM as used for the InfluxDB installation.
 
@@ -59,13 +77,14 @@ Install *SVCi* on a host, that can connect to your SAN Volume Controllers (on po
 - Run the **/opt/svci/bin/svci** program in a shell, as a @reboot cron task or configure as a proper service - there are instructions in the [doc/](doc/) folder.
 - When started, *svci* expects the InfluxDB database to exist already.
 
-### 4 - Grafana Configuration
+### 5 - Grafana Configuration
 
 - Configure Grafana to use InfluxDB as a new datasource
   - **NOTE:** set *Min time interval* depending on your SVCi *refresh* setting.
 - Import example dashboards from [doc/dashboards/*.json](doc/dashboards/) into Grafana as a starting point and get creative making your own cool dashboards - please share anything useful :)
 
 ## Notes
+
 
 ### No data (or past/future data) shown in Grafana
 
@@ -80,38 +99,47 @@ ALTER RETENTION POLICY "autogen" ON "svci" DURATION 156w
 ALTER RETENTION POLICY "autogen" ON "svci" DURATION 90d
 ```
 
-### Upgrading SVCi
+------
 
-On RPM based systems (RedHat, Suse, CentOS), download the latest *svci-x.y.z-n.noarch.rpm* file and upgrade:
-```shell
-sudo rpm -Uvh svci-x.y.z-n.noarch.rpm
-```
+<details closed>
+  <summary><B>Upgrading SVCi - Non-Containerized</B></summary>
 
-On DEB based systems (Debian, Ubuntu and derivatives), download the latest *svci_x.y.z-n_all.deb* file and upgrade:
-```shell
-sudo dpkg -i svci_x.y.z-n_all.deb
-```
+  -------
+  ### Upgrading SVCi Non-Containerized
 
-Restart the SVCi service on *systemd* based Linux systems:
+  On RPM based systems (RedHat, Suse, CentOS), download the latest *svci-x.y.z-n.noarch.rpm* file and upgrade:
+  ```shell
+  sudo rpm -Uvh svci-x.y.z-n.noarch.rpm
+  ```
 
-```shell
-systemctl restart svci
-journalctl -f -u svci  # to check log output
-```
+  On DEB based systems (Debian, Ubuntu and derivatives), download the latest *svci_x.y.z-n_all.deb* file and upgrade:
+  ```shell
+  sudo dpkg -i svci_x.y.z-n_all.deb
+  ```
 
-### AIX Notes
+  Restart the SVCi service on *systemd* based Linux systems:
 
-To install (or upgrade) on AIX, you need to pass the *--ignoreos* flag to the *rpm* command:
+  ```shell
+  systemctl restart svci
+  journalctl -f -u svci  # to check log output
+  ```
 
-```shell
-rpm -Uvh --ignoreos svci-x.y.z-n.noarch.rpm
-```
+  ### AIX Notes
+
+  To install (or upgrade) on AIX, you need to pass the *--ignoreos* flag to the *rpm* command:
+
+  ```shell
+  rpm -Uvh --ignoreos svci-x.y.z-n.noarch.rpm
+  ```
+
+    
+</details>
 
 
-## Screenshots
+-----
 
-Screenshots of the provided Grafana dashboard can be found in the [doc/screenshots/](doc/screenshots) folder.
-
+<details closed>
+  <summary><B>Development and Local Testing</B></summary>
 
 ## Development Information
 
@@ -125,7 +153,7 @@ Use the gradle build tool, which will download all required dependencies:
 ```shell
 ./gradlew clean build
 ```
-
+  -------
 ### Local Testing
 
 #### InfluxDB v1.x
@@ -167,3 +195,8 @@ Setup Grafana to connect to the InfluxDB container by defining a new datasource 
 If you are [connecting](https://docs.influxdata.com/influxdb/v2.7/tools/grafana/) to InfluxDB v2.x, then add a custom http header, enter bucket as database and disable authorization.
 - Authorization = Token abcdef_random_token_from_nfluxdb==
 - Import dashboards from the [doc/dashboards/](doc/dashboards/) folder.
+
+    
+</details>
+
+
