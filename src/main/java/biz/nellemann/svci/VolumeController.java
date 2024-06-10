@@ -623,6 +623,8 @@ class VolumeController implements Runnable {
                 fieldsMap.put("wo", stat.wo);
                 fieldsMap.put("rb", stat.rb);
                 fieldsMap.put("wb", stat.wb);
+                fieldsMap.put("rl", stat.rl);
+                fieldsMap.put("wl", stat.wl);
                 log.trace("getVDiskStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
                 measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
 
