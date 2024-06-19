@@ -1,0 +1,20 @@
+# InfluxDB v2.x example
+# Remember to use same values in .env file
+[influx]
+url = "http://influxdb:8086"
+org = "test"
+token = "hTHG-mwhRypjO8nZEmdzVKL4fM7kJH7989MC9JdgXacVHfBsks8AzeIwhqv-sXm76dphjO5pvqv5Fmsvw_zvGA=="
+bucket = "svci"
+
+###
+### Define one or more SVC's to query for metrics
+### Each entry must be named [svc.<something-unique>]
+### Please Use a USER that have the monitor role! 
+###
+
+[svc.svc02]
+hostname = "10.33.7.56"
+username = "monitor"
+password = "superduperpassword"
+refresh = 30   # How often to query SVC for data - in seconds
+trust = true   # Ignore SSL cert. errors (due to default self-signed cert.)

@@ -18,9 +18,11 @@
 - [] Container
    - [] Use best practice for dockerfiles, like run with user for non root. 
    - [] K8 Deployment?
+   - [] Config file as a environment variables? secret in K8/OC?
 
 - [] Grafana.
     - [] Updated Grafana dashboard with new stats from XML
+    - [] Events/Message/Alarms from Virtualize? - /lseventlog
 
 - [] SVCi/Virtualize Metric
     - [] Logging level 

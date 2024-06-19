@@ -1,0 +1,62 @@
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb-sme
+    ports:
+      - 8086:8086
+      - 8088:8088
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      # .env files automatically picked up if exist in same folder.
+      # PS: Password need to  be some length.  
+      # if you dont want to have secrets in env, use podman/docker secret create
+      # With the DOCKER_INFLUXDB_ Prefix this will then be picked up by influxdb container
+      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_INIT_USERNAME} 
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_INIT_PASSWORD} 
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_RETENTION=${INFLUXDB_INIT_RETENTION}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_INIT_ADMIN_TOKEN}
+    #networks:
+    #  - external_network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana-sme
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning/
+    depends_on:
+      - influxdb-sme
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_INIT_USERNAME} 
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_INIT_PASSWORD} 
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_RETENTION=${INFLUXDB_INIT_RETENTION}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_INIT_ADMIN_TOKEN}
+    #networks:
+    #  - external_network
+  svci:
+    image: ghcr.io/mnellemann/svci:latest
+    container_name: storage_metric_exporter-sme
+    restart: unless-stopped
+    #command:
+    volumes:
+      - ./svci-data:/opt/app/config/
+    depends_on:
+      - grafana-sme
+    #networks:
+    #  - external_network
+#networks:
+#  external_network:
+#    external: true
+volumes:
+  influxdb-storage:
+  grafana-storage:
