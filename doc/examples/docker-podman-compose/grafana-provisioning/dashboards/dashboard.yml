@@ -1,0 +1,12 @@
+apiVersion: 1
+providers:
+- name: Dashboard-provision
+  folder: ''
+  type: file
+  disableDeletion: false
+  #updateIntervalSeconds: 10
+  editable: true
+  allowUiUpdates: true
+  datasource: DS_SVCI
+  options:
+    path: /etc/grafana/provisioning/dashboards
