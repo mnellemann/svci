@@ -6,7 +6,7 @@ plugins {
     id 'application'
     id 'jacoco'
 
-    id "net.nemerosa.versioning" version "2.15.1"
+    id 'com.palantir.git-version' version "3.1.0"
     id "com.netflix.nebula.ospackage" version "11.4.0"
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
@@ -28,9 +28,9 @@ dependencies {
     implementation 'org.apache.sshd:sshd-core:2.12.1'       // Java SSH Client
     implementation 'org.apache.sshd:sshd-scp:2.12.1'        // Java SSH Client - SCP component
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'     // Also used by InfluxDB Client
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.3'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.4'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.15.4'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
@@ -80,22 +80,24 @@ ospackage {
 
 buildDeb {
     dependsOn startShadowScripts
-    installUtils file('scripts/utils.sh')
-    preUninstall file('scripts/remove.sh')
-    postInstall file('scripts/install.sh')
-
+    installUtils file('scripts/utils.sh') as File
+    installUtils file('scripts/config.sh') as File
+    preUninstall file('scripts/deb-pre-rm.sh') as File
+    postInstall file('scripts/deb-post-inst.sh') as File
 }
 
 buildRpm {
     dependsOn startShadowScripts
-    installUtils file('scripts/utils.sh')
-    preUninstall file('scripts/remove.sh')
-    postTrans file('scripts/install.sh')
+    installUtils file('scripts/utils.sh') as File
+    installUtils file('scripts/config.sh') as File
+    preUninstall file('scripts/rpm-pre-rm.sh') as File
+    postTrans file('scripts/rpm-post-inst.sh') as File
     os Os.LINUX
 }
 
+
 jacoco {
-    toolVersion = "0.8.8"
+    toolVersion = "0.8.12"
 }
 
 jacocoTestReport {
@@ -126,8 +128,7 @@ jar {
             'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
             'Build-Jdk'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
             'Build-User'     : System.properties['user.name'],
-            'Build-Version'  : versioning.info.tag ?: (versioning.info.branch + "-" + versioning.info.build),
-            'Build-Revision' : versioning.info.commit,
+            'Build-Version'  : gitVersion(),
             'Build-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ss.SSSZ").toString(),
             'Add-Opens'      : 'java.base/java.lang.invoke' // To ignore "Illegal reflective access by retrofit2.Platform" warnings
         )

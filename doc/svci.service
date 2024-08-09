@@ -1,5 +1,5 @@
 [Unit]
-Description=SVC Insights Service
+Description=IBM Storage Metrics Collector
 
 [Service]
 DynamicUser=yes

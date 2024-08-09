@@ -14,7 +14,7 @@ cmd="/opt/svci/bin/svci"
 args=""
 user="nobody"
 name="svci"
-description="SVC Insights"
+description="IBM Storage Metrics Collector"
 
 pid_file="/var/run/$name.pid"
 stdout_log="/var/log/$name.log"

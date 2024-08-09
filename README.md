@@ -25,7 +25,7 @@ More screenshots can be found in the [doc/screenshots/](doc/screenshots) folder.
 There are few steps in the installation.
 
 1. Prepare your Storage Virtualize
-2. Chose if you want to run it Containerized or not. 
+                        2. Chose if you want to run it Containerized or not.
 3. Installation of InfluxDB and Grafana software
 4. Installation and configuration of *SVC Insights* (SVCi)
 5. Configure Grafana and import example dashboards
@@ -33,7 +33,7 @@ There are few steps in the installation.
 ### 1 - Prepare Storage Virtualize
 
 - Create a user with the "Monitor" role
-  - :bulb: Normally the extended statistics is started, but to start or change the intervall 
+  - :bulb: Normally the extended statistics is started, but to start or change the intervall
     the user must be in the "Administrator" role (svctask startstats -interval 5) 5min
 
 - Firewall access from SVCi.
@@ -132,9 +132,7 @@ ALTER RETENTION POLICY "autogen" ON "svci" DURATION 90d
   rpm -Uvh --ignoreos svci-x.y.z-n.noarch.rpm
   ```
 
-    
 </details>
-
 
 -----
 
@@ -196,7 +194,7 @@ If you are [connecting](https://docs.influxdata.com/influxdb/v2.7/tools/grafana/
 - Authorization = Token abcdef_random_token_from_nfluxdb==
 - Import dashboards from the [doc/dashboards/](doc/dashboards/) folder.
 
-    
+
 </details>
 
 
