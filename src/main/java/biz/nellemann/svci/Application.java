@@ -34,6 +34,9 @@ import picocli.CommandLine.Option;
     defaultValueProvider = biz.nellemann.svci.DefaultProvider.class)
 public class Application implements Callable<Integer> {
 
+    InfluxClient influxClient = null;
+    PrometheusClient prometheusClient = null;
+
     @Option(names = { "-c", "--conf" }, description = "Configuration file [default: ${DEFAULT-VALUE}].", paramLabel = "<file>")
     private File configurationFile;
 
@@ -50,7 +53,6 @@ public class Application implements Callable<Integer> {
     @Override
     public Integer call() {
 
-        InfluxClient influxClient;
         List<Thread> threadList = new ArrayList<>();
 
         if(!configurationFile.exists()) {
@@ -72,16 +74,26 @@ public class Application implements Callable<Integer> {
             Configuration configuration = mapper.readerFor(Configuration.class)
                 .readValue(configurationFile);
 
-            influxClient = new InfluxClient(configuration.influx);
-            influxClient.login();
 
-            if(configuration.svc == null || configuration.svc.size() < 1) {
+            if (configuration.svc == null || configuration.svc.size() < 1) {
                 return 0;
             }
 
+            // Prometheus
+            if (configuration.prometheus != null) {
+                prometheusClient = new PrometheusClient(configuration.prometheus);
+            }
+
+            // InfluxDB
+            if (configuration.influx != null) {
+                influxClient = new InfluxClient(configuration.influx);
+                influxClient.login();
+            }
+
+
             configuration.svc.forEach((key, value) -> {
                 try {
-                    VolumeController volumeController = new VolumeController(value, influxClient);
+                    VolumeController volumeController = new VolumeController(value, influxClient, prometheusClient);
                     Thread t = new Thread(volumeController);
                     t.setName(key);
                     t.start();

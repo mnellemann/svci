@@ -43,6 +43,7 @@ class VolumeController implements Runnable {
     private final RestClient restClient;
     private final ShellClient shellClient;
     private final InfluxClient influxClient;
+    private final PrometheusClient prometheusClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ObjectMapper xmlMapper = new XmlMapper();
     private final AtomicBoolean keepRunning = new AtomicBoolean(true);
@@ -50,9 +51,10 @@ class VolumeController implements Runnable {
     protected System system;
     protected Boolean useShellForDownload = false;
 
-    VolumeController(SvcConfiguration configuration, InfluxClient influxClient) {
+    VolumeController(SvcConfiguration configuration, InfluxClient influxClient, PrometheusClient prometheusClient) {
         this.refreshValue = configuration.refresh;
         this.influxClient = influxClient;
+        this.prometheusClient = prometheusClient;
         restClient = new RestClient(configuration.hostname, configuration.username, configuration.password, 7443, configuration.trust);
         shellClient = new ShellClient(configuration.hostname, configuration.username, configuration.password, 22);
     }
@@ -94,6 +96,16 @@ class VolumeController implements Runnable {
 
         } while (keepRunning.get());
 
+    }
+
+
+    void write() {
+        if(influxClient != null) {
+            influxClient.write(null);
+        }
+        if(prometheusClient != null) {
+            prometheusClient.write(null);
+        }
     }
 
 
