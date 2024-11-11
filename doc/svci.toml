@@ -40,10 +40,17 @@ port = 9040
 ### Each entry must be named [svc.<something-unique>]
 ###
 
-[svc.site1]
-hostname = "10.10.10.5"
-username = "superuser"
-password = "password"
-refresh = 30   # How often to query SVC for data - in seconds
-trust = true   # Ignore SSL cert. errors (due to default self-signed cert.)
+#[svc.site1]
+#hostname = "10.10.10.5"
+#username = "superuser"
+#password = "password"
+#refresh = 30   # How often to query SVC for data - in seconds
+#trust = true   # Ignore SSL cert. errors (due to default self-signed cert.)
+
+[svc.fs5100]
+hostname = "10.32.64.183"
+username = "svci"
+password = "thai1ohCae9aathu"
+refresh = 30
+trust = true   # Ignore SSL cert. errors
 

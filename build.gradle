@@ -139,6 +139,11 @@ jar {
     }
 }
 
+run {
+    //args = ["--conf=doc/svci.toml", "--debug"]
+    args = ["--conf=doc/svci.toml"]
+}
+
 tasks.register("packages") {
     group "build"
     dependsOn ":build"

@@ -30,4 +30,35 @@ public class Utils {
         return zonedDateTime.toInstant();
     }
 
+
+    static MeasurementItem detectMeasurementItem(String name, Number value) {
+
+        String rename = name.substring(0, name.length() - 3);
+        MeasurementType type;
+        MeasurementUnit unit;
+
+        if(value instanceof Long) {
+            type = MeasurementType.COUNTER;
+        } else if(value instanceof Double) {
+            type = MeasurementType.GAUGE;
+        } else {
+            type = MeasurementType.INFO;
+        }
+
+        if(name.endsWith("_mb")) {
+            unit = MeasurementUnit.MB;
+        } else if(name.endsWith("_tb")) {
+            unit = MeasurementUnit.TB;
+        } else if(name.endsWith("_ms")) {
+            unit = MeasurementUnit.MS;
+        } else if(name.endsWith("_io")) {
+            unit = MeasurementUnit.IO;
+        } else {
+            unit = MeasurementUnit.NONE;
+            rename = name;
+        }
+
+        return new MeasurementItem(type, unit, rename, value);
+    }
+
 }

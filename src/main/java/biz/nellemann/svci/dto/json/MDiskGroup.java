@@ -15,33 +15,33 @@ public class MDiskGroup {
     public String status;
 
     @JsonProperty("mdisk_count")
-    public Number mDiskCount;
+    public Long mDiskCount = 0L;
 
     @JsonProperty("vdisk_count")
-    public Number vDiskCount;
+    public Long vDiskCount = 0L;
 
     @JsonProperty("capacity")
     @JsonDeserialize(converter = CapacityToDoubleConverter.class)
-    public Number capacityTotal;
+    public Double capacity = 0.0;
 
     @JsonProperty("free_capacity")
     @JsonDeserialize(converter = CapacityToDoubleConverter.class)
-    public Number capacityFree;
+    public Double capacityFree = 0.0;
 
     @JsonProperty("virtual_capacity")
     @JsonDeserialize(converter = CapacityToDoubleConverter.class)
-    public Number capacityVirtual;
+    public Double capacityVirtual = 0.0;
 
     @JsonProperty("used_capacity")
     @JsonDeserialize(converter = CapacityToDoubleConverter.class)
-    public Number capacityUsed;
+    public Double capacityUsed = 0.0;
 
     @JsonProperty("real_capacity")
     @JsonDeserialize(converter = CapacityToDoubleConverter.class)
-    public Number capacityReal;
+    public Double capacityReal = 0.0;
 
     @JsonProperty("parent_mdisk_grp_id")
-    public Number parentMDiskGroupId;
+    public String parentMDiskGroupId;
 
     @JsonProperty("parent_mdisk_grp_name")
     public String parentMDiskGroupName;

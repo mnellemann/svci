@@ -99,106 +99,107 @@ class VolumeController implements Runnable {
     }
 
 
-    void write() {
+    void write(List<MeasurementBundle> measurementBundles) {
         if(influxClient != null) {
-            influxClient.write(null);
+            influxClient.write(measurementBundles);
         }
         if(prometheusClient != null) {
-            prometheusClient.write(null);
+            prometheusClient.write(measurementBundles);
         }
     }
 
 
     void refresh() {
         log.debug("refresh()");
-        influxClient.write(getSystem(),"system");
-        influxClient.write(getNodeStats(),"node_stats");
-        influxClient.write(getEnclosureStats(),"enclosure_stats");
-        influxClient.write(getMDiskGroups(), "m_disk_groups");
+        write(getSystem());
+        write(getNodeStats());
+        write(getEnclosureStats());
+        write(getMDiskGroups());
 
         // For IO Stats
         processStats();
     }
 
 
-    List<Measurement> getSystem() {
+    List<MeasurementBundle> getSystem() {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
         try {
             String response = restClient.postRequest("/rest/v1/lssystem");
 
             // Do not try to parse empty response
             if(response == null || response.length() <= 1) {
                 log.warn("getSystem() - no data.");
-                return measurementList;
+                return bundles;
             }
 
             // Save for use elsewhere when referring to system name
             system = objectMapper.readValue(response, System.class);
 
-            HashMap<String, String> tagsMap = new HashMap<>();
-            HashMap<String, Object> fieldsMap = new HashMap<>();
+            HashMap<String, String> tags = new HashMap<>();
+            List<MeasurementItem> items = new ArrayList<>();
 
-            tagsMap.put("name", system.name);
-            fieldsMap.put("location", system.location);
-            fieldsMap.put("code_level", system.codeLevel);
-            fieldsMap.put("product_name", system.productName);
-            fieldsMap.put("total_free_tb", system.totalFreeTB);
-            fieldsMap.put("total_used_tb", system.totalUsedTB);
-            fieldsMap.put("mdisk_total_tb", system.mDiskTotalTB);
-            fieldsMap.put("vdisk_total_tb", system.vDiskTotalTB);
-            fieldsMap.put("vdisk_allocated_tb", system.vDiskAllocatedTB);
+            tags.put("system", system.name);
+            log.trace("getSystem() - tags: " + tags);
 
-            log.trace("getSystem() - fields: " + fieldsMap);
+            items.add(new MeasurementItem(MeasurementType.INFO, "location", system.location));
+            items.add(new MeasurementItem(MeasurementType.INFO, "code_level", system.codeLevel));
+            items.add(new MeasurementItem(MeasurementType.INFO, "product_name", system.productName));
 
-            measurementList.add(new Measurement(tagsMap, fieldsMap));
+            items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "free_capacity", system.totalFreeTB));
+            items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "used_capacity", system.totalUsedTB));
+            items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "mdisk_capacity", system.mDiskTotalTB));
+            items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "vdisk_capacity", system.vDiskTotalTB));
+            items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "vdisk_allocated", system.vDiskAllocatedTB));
+            log.trace("getSystem() - items: " + items);
+
+            bundles.add(new MeasurementBundle("system", tags, items));
         } catch (IOException e) {
             log.error("getSystem() - error 2: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
     }
 
 
-    List<Measurement> getNodeStats() {
-        List<Measurement> measurementList = new ArrayList<>();
-
+    List<MeasurementBundle> getNodeStats() {
+        List<MeasurementBundle> bundles = new ArrayList<>();
         try {
             String response = restClient.postRequest("/rest/v1/lsnodestats");
 
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
                 log.warn("getNodeStats() - no data.");
-                return measurementList;
+                return bundles;
             }
 
             List<NodeStat> list = Arrays.asList(objectMapper.readValue(response, NodeStat[].class));
             list.forEach( (stat) -> {
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
 
-                tagsMap.put("id", stat.nodeId);
-                tagsMap.put("name", stat.nodeName);
-                tagsMap.put("system", system.name);
+                tags.put("system", system.name);
+                tags.put("name", stat.nodeName);
+                //tags.put("id", stat.nodeId);
+                log.trace("getSystem() - tags: " + tags);
 
-                fieldsMap.put(stat.statName, stat.statCurrent);
-                log.trace("getNodeStats() - fields: " + fieldsMap);
+                items.add(Utils.detectMeasurementItem(stat.statName, stat.statCurrent));
+                log.trace("getNodeStats() - items: " + items);
 
-                measurementList.add(new Measurement(tagsMap, fieldsMap));
-
+                bundles.add(new MeasurementBundle("node", tags, items));
             });
 
         } catch (IOException e) {
             log.error("getNodeStats() - error 2: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
     }
 
 
-    List<Measurement> getEnclosureStats() {
-        List<Measurement> measurementList = new ArrayList<>();
+    List<MeasurementBundle> getEnclosureStats() {
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             String response = restClient.postRequest("/rest/v1/lsenclosurestats");
@@ -206,72 +207,34 @@ class VolumeController implements Runnable {
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
                 log.warn("getEnclosureStats() - no data.");
-                return measurementList;
+                return bundles;
             }
 
             List<EnclosureStat> list = Arrays.asList(objectMapper.readValue(response, EnclosureStat[].class));
             list.forEach( (stat) -> {
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
+                tags.put("system", system.name);
+                tags.put("id", stat.enclosureId);
 
-                tagsMap.put("id", stat.enclosureId);
-                tagsMap.put("system", system.name);
+                items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "vdisk_allocated", system.vDiskAllocatedTB));
+                items.add(Utils.detectMeasurementItem(stat.statName, stat.statCurrent));
+                log.trace("getEnclosureStats() - items: " + items);
 
-                fieldsMap.put(stat.statName, stat.statCurrent);
-                log.trace("getEnclosureStats() - fields: " + fieldsMap);
-
-                measurementList.add(new Measurement(tagsMap, fieldsMap));
-
+                bundles.add(new MeasurementBundle("enclosure", tags, items));
             });
 
         } catch (IOException e) {
             log.error("getEnclosureStats() - error 2: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
     }
 
 
-    List<Measurement> getVDisk() {
-        List<Measurement> measurementList = new ArrayList<>();
-
-        try {
-            String response = restClient.postRequest("/rest/v1/lsvdisk");
-
-            // Do not try to parse empty response
-            if(system == null || response == null || response.length() <= 1) {
-                log.warn("getVDisk() - no data.");
-                return measurementList;
-            }
-
-            List<VDisk> list = Arrays.asList(objectMapper.readValue(response, VDisk[].class));
-            list.forEach( (stat) -> {
-
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-
-                tagsMap.put("id", stat.id);
-                tagsMap.put("name", stat.name);
-                tagsMap.put("type", stat.type);
-                tagsMap.put("system", system.name);
-
-                fieldsMap.put("capacity_tb", stat.capacity);
-                log.trace("getVDisk() - fields: " + fieldsMap);
-
-                measurementList.add(new Measurement(tagsMap, fieldsMap));
-            });
-
-        } catch (IOException e) {
-            log.error("getVDisk() - error 2: {}", e.getMessage());
-        }
-
-        return measurementList;
-    }
-
-
-    List<Measurement> getMDiskGroups() {
-        List<Measurement> measurementList = new ArrayList<>();
+    List<MeasurementBundle> getMDiskGroups() {
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             String response = restClient.postRequest("/rest/v1/lsmdiskgrp");
@@ -279,38 +242,36 @@ class VolumeController implements Runnable {
             // Do not try to parse empty response
             if(system == null || response == null || response.length() <= 1) {
                 log.warn("getMDiskGroups() - no data.");
-                return measurementList;
+                return bundles;
             }
 
             List<MDiskGroup> list = Arrays.asList(objectMapper.readValue(response, MDiskGroup[].class));
             list.forEach( (stat) -> {
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
 
-                tagsMap.put("id", stat.id);
-                tagsMap.put("name", stat.name);
-                tagsMap.put("system", system.name);
+                tags.put("system", system.name);
+                tags.put("name", stat.name);
+                log.trace("getMDiskGroups() - tags: " + tags);
 
-                fieldsMap.put("mdisk_count", stat.mDiskCount);
-                fieldsMap.put("vdisk_count", stat.vDiskCount);
-                fieldsMap.put("capacity_free_tb", stat.capacityFree);
-                fieldsMap.put("capacity_real_tb", stat.capacityReal);
-                fieldsMap.put("capacity_used_tb", stat.capacityUsed);
-                fieldsMap.put("capacity_total_tb", stat.capacityTotal);
-                fieldsMap.put("capacity_virtual_tb", stat.capacityVirtual);
-                log.trace("getMDiskGroups() - fields: " + fieldsMap);
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.RATIO, "mdisk", stat.mDiskCount));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.RATIO, "vdisk", stat.vDiskCount));
+                items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "capacity", stat.capacity));
+                items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "capacity_free", stat.capacityFree));
+                items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "capacity_real", stat.capacityReal));
+                items.add(new MeasurementItem(MeasurementType.GAUGE, MeasurementUnit.TB, "capacity_virtual", stat.capacityVirtual));
+                log.trace("getMDiskGroups() - items: " + items);
 
-                measurementList.add(new Measurement(tagsMap, fieldsMap));
+                bundles.add(new MeasurementBundle("disk_groups", tags, items));
 
-                //log.info("{}: {} -> {}", stat.nodeName, stat.statName, stat.statCurrent);
             });
 
         } catch (IOException e) {
             log.error("getMDiskGroups() - error 2: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
     }
 
 
@@ -349,28 +310,29 @@ class VolumeController implements Runnable {
 
             if(dump.filename.startsWith("Nd_stats")) {
                 log.debug("processStats() - drives: {}", dump.filename);
-                influxClient.write(getDriveStats(output), "stat_drive");
+                write(getDriveStats(output));
             }
 
             if(dump.filename.startsWith("Ng_stats")) {
                 log.debug("processStats() - volume groups: {}", dump.filename);
-                influxClient.write(getVolumeGroupStats(output), "stat_vg");
+                write(getVolumeGroupStats(output));
+                //influxClient.write(getVolumeGroupStats(output), "stat_vg");
             }
 
             if(dump.filename.startsWith("Nm_stats")) {
                 log.debug("processStats() - managed disks: {}", dump.filename);
-                influxClient.write(getMDiskStats(output), "stat_mdisk");
+                //influxClient.write(getMDiskStats(output), "stat_mdisk");
             }
 
             if(dump.filename.startsWith("Nn_stats")) {
                 log.debug("processStats() - nodes: {}", dump.filename);
-                influxClient.write(getNodeStats(output), "stat_node");
-                influxClient.write(getPortStats(output), "stat_port");
+                //influxClient.write(getNodeStats(output), "stat_node");
+                //influxClient.write(getPortStats(output), "stat_port");
             }
 
             if(dump.filename.startsWith("Nv_stats")) {
                 log.debug("processStats() - virtual disks: {}", dump.filename);
-                influxClient.write(getVDiskStats(output), "stat_vdisk");
+                //influxClient.write(getVDiskStats(output), "stat_vdisk");
             }
 
         }
@@ -378,9 +340,9 @@ class VolumeController implements Runnable {
     }
 
 
-    List<Measurement> getDriveStats(String stats) {
+    List<MeasurementBundle> getDriveStats(String stats) {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             DriveStatCollection statCollection = xmlMapper.readerFor(DriveStatCollection.class).readValue(stats);
@@ -392,11 +354,14 @@ class VolumeController implements Runnable {
                 //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
                 Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-                tagsMap.put("idx", stat.idx);
-                tagsMap.put("node", statCollection.id);
-                tagsMap.put("cluster", statCollection.cluster);
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
+
+                //tags.put("idx", stat.idx);
+                tags.put("node", statCollection.id);
+                tags.put("cluster", statCollection.cluster);
+
+/*
                 fieldsMap.put("pre", stat.pre);
                 fieldsMap.put("pro", stat.pro);
                 fieldsMap.put("pwe", stat.pwe);
@@ -413,8 +378,11 @@ class VolumeController implements Runnable {
                 fieldsMap.put("we", stat.we);
                 fieldsMap.put("wo", stat.wo);
                 fieldsMap.put("wq", stat.wq);
-                log.trace("getDriveStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+ */
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pre", stat.pre));
+                log.trace("getDriveStats() - items: " + items);
+
+                bundles.add(new MeasurementBundle(timestamp, "stat_drive", tags, items));
 
             });
 
@@ -422,14 +390,14 @@ class VolumeController implements Runnable {
             log.warn("getDriveStats() - error: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
 
     }
 
 
-    List<Measurement> getVolumeGroupStats(String stats) {
+    List<MeasurementBundle> getVolumeGroupStats(String stats) {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             VolumeGroupStatCollection statCollection = xmlMapper.readerFor(VolumeGroupStatCollection.class).readValue(stats);
@@ -441,12 +409,16 @@ class VolumeController implements Runnable {
                 //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtctimestampUtc : statCollection.timestamp );
                 Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-                tagsMap.put("idx", stat.idx);
-                tagsMap.put("name", stat.name);
-                tagsMap.put("node", statCollection.id);
-                tagsMap.put("cluster", statCollection.cluster);
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
+
+
+                //tags.put("idx", stat.idx);
+                tags.put("name", stat.name);
+                tags.put("node", statCollection.id);
+                tags.put("cluster", statCollection.cluster);
+
+                /*
                 fieldsMap.put("rarp", stat.rarp);
                 fieldsMap.put("rwrp", stat.rwrp);
                 fieldsMap.put("rnrw", stat.rnrw);
@@ -456,8 +428,12 @@ class VolumeController implements Runnable {
                 fieldsMap.put("rhalww", stat.rhalww);
                 fieldsMap.put("rharwl", stat.rharwl);
                 fieldsMap.put("rharwc", stat.rharwc);
-                log.trace("getVolumeGroupStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+                */
+
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rarp", stat.rarp));
+                log.trace("getVolumeGroupStats() - items: " + items);
+
+                bundles.add(new MeasurementBundle(timestamp, "stat_vg", tags, items));
 
             });
 
@@ -465,7 +441,7 @@ class VolumeController implements Runnable {
             log.warn("getVolumeGroupStats() - error: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
 
     }
 

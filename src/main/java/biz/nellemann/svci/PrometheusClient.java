@@ -89,6 +89,9 @@ public class PrometheusClient {
             case RATIO:
                 unit = Unit.RATIO;
                 break;
+            case NONE:
+                unit = new Unit("_");
+                break;
             default:
                 unit = new Unit(item.getMeasurementUnit().name().toLowerCase());
         }
@@ -130,7 +133,7 @@ public class PrometheusClient {
         Metric m = registered.get(name);
         if(m instanceof Counter) {
             //log.debug("process() - name: {}, type: COUNTER", name);
-                ((Counter)m).labelValues(labelValues).inc(item.getLongValue());
+            ((Counter)m).labelValues(labelValues).inc(item.getLongValue());
         } else if(m instanceof Gauge) {
             //log.debug("process() - name: {}, type: GAUGE", name);
             ((Gauge)m).labelValues(labelValues).set(item.getDoubleValue());
