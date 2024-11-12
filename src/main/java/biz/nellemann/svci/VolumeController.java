@@ -358,7 +358,7 @@ class VolumeController implements Runnable {
 
                 //tags.put("idx", stat.idx);
                 tags.put("node", statCollection.id);
-                tags.put("cluster", statCollection.cluster);
+                tags.put("system", statCollection.cluster);
 
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pre", stat.pre));
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pro", stat.pro));
@@ -411,7 +411,7 @@ class VolumeController implements Runnable {
                 //tags.put("idx", stat.idx);
                 tags.put("name", stat.name);
                 tags.put("node", statCollection.id);
-                tags.put("cluster", statCollection.cluster);
+                tags.put("system", statCollection.cluster);
 
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rarp", stat.rarp));
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rwrp", stat.rwrp));
@@ -457,27 +457,7 @@ class VolumeController implements Runnable {
                 //tags.put("idx", stat.idx);
                 //tags.put("name", stat.name);
                 tags.put("node", statCollection.id);
-                tags.put("cluster", statCollection.cluster);
-
-                /*
-                fieldsMap.put("pre", stat.pre);
-                fieldsMap.put("pro", stat.pro);
-                fieldsMap.put("pwe", stat.pwe);
-                fieldsMap.put("pwo", stat.pwo);
-                fieldsMap.put("rb", stat.rb);
-                fieldsMap.put("re", stat.re);
-                fieldsMap.put("ro", stat.ro);
-                fieldsMap.put("rq", stat.rq);
-                fieldsMap.put("ure", stat.ure);
-                fieldsMap.put("urq", stat.urq);
-                fieldsMap.put("uwe", stat.uwe);
-                fieldsMap.put("uwq", stat.uwq);
-                fieldsMap.put("wb", stat.wb);
-                fieldsMap.put("we", stat.we);
-                fieldsMap.put("wo", stat.wo);
-                fieldsMap.put("wq", stat.wq);
-                log.trace("getMDiskStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                 */
+                tags.put("system", statCollection.cluster);
 
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pre", stat.pre));
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pro", stat.pro));
@@ -527,7 +507,7 @@ class VolumeController implements Runnable {
                 List<MeasurementItem> items = new ArrayList<>();
 
                 //tags.put("id", stat.id);
-                tags.put("cluster", stat.cluster);
+                tags.put("system", stat.cluster);
 
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "ro", stat.ro));
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "wo", stat.wo));
@@ -573,7 +553,7 @@ class VolumeController implements Runnable {
                 //tags.put("id", stat.id);
                 tags.put("type", stat.type);
                 tags.put("node", statCollection.id);
-                tags.put("cluster", statCollection.cluster);
+                tags.put("system", statCollection.cluster);
 
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "hbt", stat.hbt));
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "hbr", stat.hbr));
@@ -622,9 +602,10 @@ class VolumeController implements Runnable {
                 List<MeasurementItem> items = new ArrayList<>();
 
                 //tags.put("id", stat.id);
-                tags.put("idx", stat.idx);
+                //tags.put("idx", stat.idx);
+                tags.put("name", stat.id);
                 tags.put("node", statCollection.id);
-                tags.put("cluster", statCollection.cluster);
+                tags.put("system", statCollection.cluster);
 
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "ro", stat.ro));
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "wo", stat.wo));
