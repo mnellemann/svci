@@ -315,24 +315,23 @@ class VolumeController implements Runnable {
 
             if(dump.filename.startsWith("Ng_stats")) {
                 log.debug("processStats() - volume groups: {}", dump.filename);
-                write(getVolumeGroupStats(output));
-                //influxClient.write(getVolumeGroupStats(output), "stat_vg");
+                //write(getVolumeGroupStats(output));
             }
 
             if(dump.filename.startsWith("Nm_stats")) {
                 log.debug("processStats() - managed disks: {}", dump.filename);
-                //influxClient.write(getMDiskStats(output), "stat_mdisk");
+                write(getMDiskStats(output));
             }
 
             if(dump.filename.startsWith("Nn_stats")) {
                 log.debug("processStats() - nodes: {}", dump.filename);
-                //influxClient.write(getNodeStats(output), "stat_node");
-                //influxClient.write(getPortStats(output), "stat_port");
+                write(getNodeStats(output));
+                write(getPortStats(output));
             }
 
             if(dump.filename.startsWith("Nv_stats")) {
                 log.debug("processStats() - virtual disks: {}", dump.filename);
-                //influxClient.write(getVDiskStats(output), "stat_vdisk");
+                write(getVDiskStats(output));
             }
 
         }
@@ -361,25 +360,22 @@ class VolumeController implements Runnable {
                 tags.put("node", statCollection.id);
                 tags.put("cluster", statCollection.cluster);
 
-/*
-                fieldsMap.put("pre", stat.pre);
-                fieldsMap.put("pro", stat.pro);
-                fieldsMap.put("pwe", stat.pwe);
-                fieldsMap.put("pwo", stat.pwo);
-                fieldsMap.put("rb", stat.rb);
-                fieldsMap.put("re", stat.re);
-                fieldsMap.put("ro", stat.ro);
-                fieldsMap.put("rq", stat.rq);
-                fieldsMap.put("ure", stat.ure);
-                fieldsMap.put("urq", stat.urq);
-                fieldsMap.put("uwe", stat.uwe);
-                fieldsMap.put("uwq", stat.uwq);
-                fieldsMap.put("wb", stat.wb);
-                fieldsMap.put("we", stat.we);
-                fieldsMap.put("wo", stat.wo);
-                fieldsMap.put("wq", stat.wq);
- */
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pre", stat.pre));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pro", stat.pro));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pwe", stat.pwe));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pwo", stat.pwo));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "rb", stat.rb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "re", stat.re));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "re", stat.ro));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "re", stat.rq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "ure", stat.ure));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "urq", stat.urq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "uwe", stat.uwe));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "uwq", stat.uwq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "wb", stat.wb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "we", stat.we));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "wo", stat.wo));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "wq", stat.wq));
                 log.trace("getDriveStats() - items: " + items);
 
                 bundles.add(new MeasurementBundle(timestamp, "stat_drive", tags, items));
@@ -412,25 +408,20 @@ class VolumeController implements Runnable {
                 HashMap<String, String> tags = new HashMap<>();
                 List<MeasurementItem> items = new ArrayList<>();
 
-
                 //tags.put("idx", stat.idx);
                 tags.put("name", stat.name);
                 tags.put("node", statCollection.id);
                 tags.put("cluster", statCollection.cluster);
 
-                /*
-                fieldsMap.put("rarp", stat.rarp);
-                fieldsMap.put("rwrp", stat.rwrp);
-                fieldsMap.put("rnrw", stat.rnrw);
-                fieldsMap.put("rnrb", stat.rnrb);
-                fieldsMap.put("rhalwl", stat.rhalwl);
-                fieldsMap.put("rhalwc", stat.rhalwc);
-                fieldsMap.put("rhalww", stat.rhalww);
-                fieldsMap.put("rharwl", stat.rharwl);
-                fieldsMap.put("rharwc", stat.rharwc);
-                */
-
                 items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rarp", stat.rarp));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rwrp", stat.rwrp));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rnrw", stat.rnrw));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rnrb", stat.rnrb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rhalwl", stat.rhalwl));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rhalwc", stat.rhalwc));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rhalww", stat.rhalww));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rharwl", stat.rharwl));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.IO, "rharwc", stat.rharwc));
                 log.trace("getVolumeGroupStats() - items: " + items);
 
                 bundles.add(new MeasurementBundle(timestamp, "stat_vg", tags, items));
@@ -446,9 +437,9 @@ class VolumeController implements Runnable {
     }
 
 
-    List<Measurement> getMDiskStats(String stats) {
+    List<MeasurementBundle> getMDiskStats(String stats) {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             MDiskStatCollection statCollection = xmlMapper.readerFor(MDiskStatCollection.class).readValue(stats);
@@ -460,12 +451,15 @@ class VolumeController implements Runnable {
                 //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
                 Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-                tagsMap.put("idx", stat.idx);
-                tagsMap.put("id", stat.id);
-                tagsMap.put("node", statCollection.id);
-                tagsMap.put("cluster", statCollection.cluster);
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
+
+                //tags.put("idx", stat.idx);
+                //tags.put("name", stat.name);
+                tags.put("node", statCollection.id);
+                tags.put("cluster", statCollection.cluster);
+
+                /*
                 fieldsMap.put("pre", stat.pre);
                 fieldsMap.put("pro", stat.pro);
                 fieldsMap.put("pwe", stat.pwe);
@@ -483,22 +477,41 @@ class VolumeController implements Runnable {
                 fieldsMap.put("wo", stat.wo);
                 fieldsMap.put("wq", stat.wq);
                 log.trace("getMDiskStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+                 */
 
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pre", stat.pre));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pro", stat.pro));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pwe", stat.pwe));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "pwo", stat.pwo));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "rb", stat.rb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "re", stat.re));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "ro", stat.ro));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "rq", stat.rq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "ure", stat.ure));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "urq", stat.urq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "uwe", stat.uwe));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "uwq", stat.uwq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "uwq", stat.wb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "we", stat.we));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "wo", stat.wo));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "wq", stat.wq));
+                log.trace("getMDiskStats() - items: " + items);
+
+                bundles.add(new MeasurementBundle(timestamp, "stat_mdisk", tags, items));
             });
 
         } catch (JsonProcessingException e) {
             log.warn("getMDiskStats() - error: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
 
     }
 
 
-    List<Measurement> getNodeStats(String stats) {
+    List<MeasurementBundle> getNodeStats(String stats) {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             NodeStatCollection statCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(stats);
@@ -510,37 +523,39 @@ class VolumeController implements Runnable {
                 //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
                 Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-                tagsMap.put("id", stat.id);
-                tagsMap.put("cluster", stat.cluster);
-                fieldsMap.put("ro", stat.ro);
-                fieldsMap.put("wo", stat.wo);
-                fieldsMap.put("rb", stat.rb);
-                fieldsMap.put("wb", stat.wb);
-                fieldsMap.put("lrb", stat.lrb);
-                fieldsMap.put("lwb", stat.lwb);
-                fieldsMap.put("re", stat.re);
-                fieldsMap.put("we", stat.we);
-                fieldsMap.put("rq", stat.rq);
-                fieldsMap.put("wq", stat.wq);
-                log.trace("getNodeStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
 
+                //tags.put("id", stat.id);
+                tags.put("cluster", stat.cluster);
+
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "ro", stat.ro));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "wo", stat.wo));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "rb", stat.rb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "wb", stat.wb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "lrb", stat.lrb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "lwb", stat.lwb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "re", stat.re));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "we", stat.we));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "rq", stat.rq));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "wq", stat.wq));
+                log.trace("getNodeStats() - items: " + items);
+
+                bundles.add(new MeasurementBundle(timestamp, "stat_node", tags, items));
             });
 
         } catch (JsonProcessingException e) {
             log.warn("getNodeStats() - error: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
 
     }
 
 
-    List<Measurement> getPortStats(String stats) {
+    List<MeasurementBundle> getPortStats(String stats) {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             NodeStatCollection statCollection = xmlMapper.readerFor(NodeStatCollection.class).readValue(stats);
@@ -552,44 +567,46 @@ class VolumeController implements Runnable {
                 //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
                 Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-                tagsMap.put("id", stat.id);
-                tagsMap.put("type", stat.type);
-                tagsMap.put("node", statCollection.id);
-                tagsMap.put("cluster", statCollection.cluster);
-                fieldsMap.put("hbt", stat.hbt);
-                fieldsMap.put("hbr", stat.hbr);
-                fieldsMap.put("het", stat.het);
-                fieldsMap.put("her", stat.her);
-                fieldsMap.put("cbt", stat.cbt);
-                fieldsMap.put("cbr", stat.cbr);
-                fieldsMap.put("cet", stat.cet);
-                fieldsMap.put("cer", stat.cer);
-                fieldsMap.put("lnbt", stat.lnbt);
-                fieldsMap.put("lnbr", stat.lnbr);
-                fieldsMap.put("lnet", stat.lnet);
-                fieldsMap.put("lner", stat.lner);
-                fieldsMap.put("rmbt", stat.rmbt);
-                fieldsMap.put("rmbr", stat.rmbr);
-                fieldsMap.put("rmet", stat.rmet);
-                fieldsMap.put("rmer", stat.rmer);
-                log.trace("getPortStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
 
+                //tags.put("id", stat.id);
+                tags.put("type", stat.type);
+                tags.put("node", statCollection.id);
+                tags.put("cluster", statCollection.cluster);
+
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "hbt", stat.hbt));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "hbr", stat.hbr));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "het", stat.het));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "her", stat.her));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "cbt", stat.cbt));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "cbr", stat.cbr));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "cet", stat.cet));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "cer", stat.cer));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "lnbt", stat.lnbt));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "lnbr", stat.lnbr));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "lnet", stat.lnet));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "lner", stat.lner));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "rmbt", stat.rmbt));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BYTES, "rmbr", stat.rmbr));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "rmet", stat.rmet));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "rmer", stat.rmer));
+                log.trace("getPortStats() - items: " + items);
+
+                bundles.add(new MeasurementBundle(timestamp, "stat_port", tags, items));
             });
 
         } catch (JsonProcessingException e) {
             log.warn("getPortStats() - error: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
 
     }
 
-    List<Measurement> getVDiskStats(String stats) {
+    List<MeasurementBundle> getVDiskStats(String stats) {
 
-        List<Measurement> measurementList = new ArrayList<>();
+        List<MeasurementBundle> bundles = new ArrayList<>();
 
         try {
             VDiskStatCollection statCollection = xmlMapper.readerFor(VDiskStatCollection.class).readValue(stats);
@@ -601,28 +618,30 @@ class VolumeController implements Runnable {
                 //Instant timestamp = Utils.parseDateTime( (statCollection.timestampUtc != null) ? statCollection.timestampUtc : statCollection.timestamp );
                 Instant timestamp = Utils.parseDateTime(statCollection.timestamp);
 
-                HashMap<String, String> tagsMap = new HashMap<>();
-                HashMap<String, Object> fieldsMap = new HashMap<>();
-                tagsMap.put("id", stat.id);
-                tagsMap.put("idx", stat.idx);
-                tagsMap.put("node", statCollection.id);
-                tagsMap.put("cluster", statCollection.cluster);
-                fieldsMap.put("ro", stat.ro);
-                fieldsMap.put("wo", stat.wo);
-                fieldsMap.put("rb", stat.rb);
-                fieldsMap.put("wb", stat.wb);
-                fieldsMap.put("rl", stat.rl);
-                fieldsMap.put("wl", stat.wl);
-                log.trace("getVDiskStats() - tags: {}, fields: {}", tagsMap, fieldsMap);
-                measurementList.add(new Measurement(timestamp, tagsMap, fieldsMap));
+                HashMap<String, String> tags = new HashMap<>();
+                List<MeasurementItem> items = new ArrayList<>();
 
+                //tags.put("id", stat.id);
+                tags.put("idx", stat.idx);
+                tags.put("node", statCollection.id);
+                tags.put("cluster", statCollection.cluster);
+
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "ro", stat.ro));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.OPS, "wo", stat.wo));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "rb", stat.rb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.BLOCKS, "wb", stat.wb));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "rl", stat.rl));
+                items.add(new MeasurementItem(MeasurementType.COUNTER, MeasurementUnit.MS, "wl", stat.wl));
+                log.trace("getVDiskStats() - items: " + items);
+
+                bundles.add(new MeasurementBundle(timestamp, "stat_vdisk", tags, items));
             });
 
         } catch (JsonProcessingException e) {
             log.warn("getVDiskStats() - error: {}", e.getMessage());
         }
 
-        return measurementList;
+        return bundles;
 
     }
 

@@ -14,5 +14,7 @@ public enum MeasurementUnit {
     PACKETS,
     SECONDS,
     CELSIUS,
-    NONE;
+    BLOCKS,
+    OPS,
+    NONE
 }

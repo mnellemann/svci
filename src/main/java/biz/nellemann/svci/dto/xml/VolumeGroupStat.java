@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * See {@link https://www.ibm.com/docs/en/sanvolumecontroller/8.6.x?topic=troubleshooting-starting-statistics-collection}
+ * See {@link https://www.ibm.com/docs/en/sanvolumecontroller/8.6.x?topic=troubleshooting-starting-statistics-collectionhttps://www.ibm.com/docs/en/sanvolumecontroller/8.6.x?topic=troubleshooting-starting-statistics-collection}
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
